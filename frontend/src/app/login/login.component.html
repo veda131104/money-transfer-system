@@ -10,7 +10,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <mat-card class="card">
         <header class="card-header">
           <p class="eyebrow">Welcome back</p>
           <h1>Sign in to PayFid</h1>
@@ -20,42 +20,47 @@
         </header>
 
         <form class="form">
-          <label class="field">
-            <span>Email address</span>
-            <input type="email" placeholder="you@company.com" autocomplete="email" />
-          </label>
+          <mat-form-field appearance="outline" class="field">
+            <mat-label>Email address</mat-label>
+            <input matInput type="email" placeholder="you@company.com" autocomplete="email" />
+          </mat-form-field>
 
-          <label class="field">
-            <span>Password</span>
-            <input type="password" placeholder="Enter your password" autocomplete="current-password" />
-          </label>
+          <mat-form-field appearance="outline" class="field">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              type="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+          </mat-form-field>
 
           <div class="form-row">
             <label class="checkbox">
               <input type="checkbox" checked />
               <span>Keep me signed in</span>
             </label>
-            <button class="link" type="button">Forgot password?</button>
+            <button class="link" type="button" mat-button>Forgot password?</button>
           </div>
 
-          <button class="primary" type="submit">Sign in</button>
-          <button class="ghost" type="button">Use a passkey</button>
+          <button class="primary" type="submit" mat-flat-button>Sign in</button>
+          <button class="ghost" type="button" mat-stroked-button>Use a passkey</button>
 
           <div class="divider">
             <span>Or continue with</span>
           </div>
 
           <div class="oauth">
-            <button type="button">Google</button>
-            <button type="button">Microsoft</button>
-            <button type="button">Apple</button>
+            <button type="button" mat-stroked-button>Google</button>
+            <button type="button" mat-stroked-button>Microsoft</button>
+            <button type="button" mat-stroked-button>Apple</button>
           </div>
         </form>
 
         <p class="footnote">
-          New to PayFid? <button class="link" type="button">Create an account</button>
+          New to PayFid? <button class="link" type="button" mat-button>Create an account</button>
         </p>
-      </div>
+      </mat-card>
     </div>
 
   </div>

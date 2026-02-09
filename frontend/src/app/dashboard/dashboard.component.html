@@ -10,28 +10,28 @@
     <div class="account">
       <div>
         <p class="account-label">Account holder</p>
-        <p class="account-name">Veda Chatiyode</p>
+        <p class="account-name">Aarav Sharma</p>
       </div>
-      <button class="logout ghost" type="button">Log out</button>
+      <button class="logout ghost" type="button" mat-stroked-button>Log out</button>
     </div>
     <div class="topbar-actions">
-      <button class="ghost" type="button">History</button>
-      <button class="primary" type="button">New Transfer</button>
-      <button class="ghost" type="button">Log out</button>
+      <button class="ghost" type="button" mat-stroked-button>History</button>
+      <button class="primary" type="button" mat-flat-button>New Transfer</button>
+      <button class="ghost" type="button" mat-stroked-button>Log out</button>
     </div>
   </header>
 
   <main class="dashboard-grid">
-    <section class="card highlights">
+    <mat-card class="card highlights">
       <h1>Today at a glance</h1>
       <p>Live status of your payout corridors and risk posture.</p>
       <div class="balance">
         <p class="balance-label">Current balance</p>
-        <p class="balance-value">₹2,48,930.50</p>
+        <p class="balance-value">&#8377;2,48,930.50</p>
       </div>
       <div class="metrics">
         <div class="metric">
-          <p class="metric-value">₹4.2M</p>
+          <p class="metric-value">&#8377;4.2M</p>
           <p class="metric-label">Processed today</p>
         </div>
         <div class="metric">
@@ -43,9 +43,9 @@
           <p class="metric-label">At-risk volume</p>
         </div>
       </div>
-    </section>
+    </mat-card>
 
-    <section class="card flow">
+    <mat-card class="card flow">
       <div class="card-header">
         <h2>Transfer flow</h2>
         <span class="badge">Live</span>
@@ -64,9 +64,9 @@
           <div class="bar"><span style="width: 18%"></span></div>
         </div>
       </div>
-    </section>
+    </mat-card>
 
-    <section class="card insights">
+    <mat-card class="card insights">
       <h2>Compliance insights</h2>
       <p>Automated checks across 14 sanction lists in the last hour.</p>
       <div class="insight-grid">
@@ -83,13 +83,13 @@
           <p class="insight-label">Escalations</p>
         </div>
       </div>
-    </section>
+    </mat-card>
   </main>
 
   <nav class="bottom-nav">
-    <button type="button" class="nav-item active">Dashboard</button>
-    <button type="button" class="nav-item">History</button>
-    <button type="button" class="nav-item">New Transfer</button>
-    <button type="button" class="nav-item logout">Log out</button>
+    <button type="button" class="nav-item active" mat-button>Dashboard</button>
+    <button type="button" class="nav-item" mat-button>History</button>
+    <button type="button" class="nav-item" mat-button>New Transfer</button>
+    <button type="button" class="nav-item logout" mat-button>Log out</button>
   </nav>
 </section>
