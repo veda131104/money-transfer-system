@@ -1,0 +1,44 @@
+<section class="dashboard-shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">PF</span>
+      <div>
+        <p class="brand-name">PayFid</p>
+        <p class="brand-tag">Confirm PIN</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="pin-grid">
+    <mat-card class="card pin-card">
+      <h2>Enter PIN to confirm transfer</h2>
+      <p *ngIf="accountNumber"><strong>To:</strong> {{ accountNumber }}</p>
+      <p *ngIf="amount"><strong>Amount:</strong> ₹{{ amount }}</p>
+
+      <div *ngIf="!isSuccess">
+        <input type="password" maxlength="4" placeholder="Enter 4-digit PIN" (input)="onPinInput($event)" />
+        <div class="actions">
+          <button mat-flat-button color="primary" (click)="onConfirm()">Confirm</button>
+          <button mat-stroked-button (click)="onBack()">Back</button>
+        </div>
+        <p class="message" *ngIf="message">{{ message }}</p>
+
+        <!-- Use the old buffering UI style from transfer component -->
+        <div *ngIf="isLoading && !isSuccess" class="loading-state">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Processing your transfer...</p>
+        </div>
+      </div>
+
+      <div *ngIf="isSuccess" class="success">
+        <div class="success-icon">✓</div>
+        <h3>Transfer Successful</h3>
+        <p>Your transfer was completed successfully.</p>
+        <div class="actions">
+          <button mat-flat-button (click)="onGoHistory()">View History</button>
+          <button mat-stroked-button (click)="onBack()">New Transfer</button>
+        </div>
+      </div>
+    </mat-card>
+  </main>
+</section>

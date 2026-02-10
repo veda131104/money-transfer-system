@@ -108,6 +108,18 @@
   color: #1d3b4f;
 }
 
+.topbar-actions button.ghost.active {
+  background: #ad00ad !important;
+  border-color: #ad00ad !important;
+  color: #fefbf6 !important;
+}
+
+.topbar-actions button.primary.active {
+  background: #ad00ad !important;
+  color: #fefbf6 !important;
+  box-shadow: 0 12px 28px rgba(173, 0, 173, 0.25) !important;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -345,7 +357,7 @@
 }
 
 .nav-item.active {
-  background: #1d3b4f;
+  background: #ad00ad;
   color: #fefbf6;
 }
 

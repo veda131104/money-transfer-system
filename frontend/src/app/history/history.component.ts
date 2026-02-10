@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TransactionService, Transaction } from '../services/transaction.service';
@@ -8,11 +8,12 @@ import { TransactionService, Transaction } from '../services/transaction.service
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, RouterLink],
+  imports: [CommonModule, MatButtonModule, MatCardModule, RouterLink, RouterLinkActive],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss'
 })
 export class HistoryComponent implements OnInit {
+  routerLinkActiveOptions = { exact: true };
   allTransactions: Transaction[] = [];
   displayedTransactions: Transaction[] = [];
   selectedTransaction: Transaction | null = null;

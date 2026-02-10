@@ -21,12 +21,20 @@ export class TransferComponent {
     accountNumber: '',
     amount: '',
   };
+  // PIN modal state
+  showPinModal: boolean = false;
+  pin: string = '';
+  pinMessage: string = '';
+  pinLoading: boolean = false;
+  pinVisible: boolean = false;
+  pinErrorTimer: any = null;
+  routerLinkActiveOptions = { exact: true };
 
   constructor(private router: Router, private ngZone: NgZone, private cdr: ChangeDetectorRef, private transactionService: TransactionService) {}
 
   onAccountNumberInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const value = input.value.replace(/[^0-9]/g, '');
+    const value = input.value.replace(/[^0-9]/g, '').slice(0, 12);
     input.value = value;
     this.accountNumber = value;
   }
@@ -52,8 +60,8 @@ export class TransferComponent {
       return;
     }
 
-    if (this.accountNumber.length < 8) {
-      alert('Account number must be at least 8 digits.');
+    if (this.accountNumber.length < 12) {
+      alert('Account number must be exactly 12 digits.');
       return;
     }
 
@@ -68,21 +76,68 @@ export class TransferComponent {
       return;
     }
 
-    // Show loading state
-    this.isLoading = true;
+    // Open PIN modal (keep transfer details ready)
     this.successDetails = {
       accountNumber: this.accountNumber,
       amount: this.amount,
     };
+    this.pin = '';
+    this.pinMessage = '';
+    this.showPinModal = true;
+  }
 
-    // Simulate transfer processing (2 seconds)
+  onPinInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+    this.pin = input.value;
+  }
+
+  togglePinVisibility(): void {
+    this.pinVisible = !this.pinVisible;
+  }
+
+  onConfirmPin(): void {
+    if (!this.pin || this.pin.length < 4) {
+      this.pinMessage = 'Please enter a 4-digit PIN.';
+      return;
+    }
+
+    const CORRECT_PIN = '1234';
+    if (this.pin !== CORRECT_PIN) {
+      // Add failed transaction to history
+      const failedTxn: Transaction = {
+        id: Date.now().toString(),
+        accountNumber: this.accountNumber,
+        amount: this.amount,
+        date: new Date(),
+        type: 'debit',
+        status: 'failed',
+        referenceId: this.transactionService.generateReferenceId(),
+        description: 'Incorrect PIN'
+      };
+      this.transactionService.addTransaction(failedTxn);
+      this.pinMessage = 'Incorrect PIN. Transaction failed.';
+      this.pin = '';
+      this.pinVisible = false;
+      // Auto-close modal after 5 seconds
+      if (this.pinErrorTimer) clearTimeout(this.pinErrorTimer);
+      this.pinErrorTimer = setTimeout(() => {
+        this.closePinModal();
+      }, 5000);
+      return;
+    }
+
+    // Correct PIN: show buffering UI and complete transfer
+    this.pinLoading = true;
+    this.pinMessage = '';
     this.ngZone.runOutsideAngular(() => {
       setTimeout(() => {
         this.ngZone.run(() => {
+          this.pinLoading = false;
+          this.showPinModal = false;
           this.isLoading = false;
           this.isSuccess = true;
-          
-          // Add transaction to history
+
           const newTransaction: Transaction = {
             id: Date.now().toString(),
             accountNumber: this.accountNumber,
@@ -91,14 +146,20 @@ export class TransferComponent {
             type: 'debit',
             status: 'completed',
             referenceId: this.transactionService.generateReferenceId(),
-            description: 'Transfer initiated'
+            description: 'Transfer completed'
           };
           this.transactionService.addTransaction(newTransaction);
-          
           this.cdr.detectChanges();
         });
       }, 2000);
     });
+  }
+
+  closePinModal(): void {
+    if (this.pinErrorTimer) clearTimeout(this.pinErrorTimer);
+    this.showPinModal = false;
+    this.pin = '';
+    this.pinMessage = '';
   }
 
   onNewTransfer(): void {

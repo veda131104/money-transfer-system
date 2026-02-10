@@ -108,6 +108,18 @@
   color: #1d3b4f;
 }
 
+.topbar-actions button.ghost.active {
+  background: #ad00ad !important;
+  border-color: #ad00ad !important;
+  color: #fefbf6 !important;
+}
+
+.topbar-actions button.primary.active {
+  background: #ad00ad !important;
+  color: #fefbf6 !important;
+  box-shadow: 0 12px 28px rgba(173, 0, 173, 0.25) !important;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -345,7 +357,7 @@
 }
 
 .nav-item.active {
-  background: #1d3b4f;
+  background: #ad00ad;
   color: #fefbf6;
 }
 
@@ -574,6 +586,116 @@
   font-size: 1.1rem;
   color: #1d3b4f;
   font-weight: 500;
+}
+
+/* Modal overlay and PIN modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(3px);
+  z-index: 998;
+}
+
+.pin-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  width: 100%;
+  max-width: 520px;
+  padding: 0 1rem;
+}
+
+.pin-card {
+  padding: 1.5rem 1.25rem;
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(22,42,52,0.14);
+}
+
+.pin-card .pin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pin-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1d3b4f;
+}
+
+.pin-card .pin-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #6a7881;
+}
+
+.pin-card input[type="password"],
+.pin-card input[type="text"] {
+  width: 70%;
+  padding: 0.85rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(33,90,102,0.08);
+  font-size: 1rem;
+}
+
+.pin-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.pin-input-container input {
+  width: 70%;
+  padding: 0.85rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(33,90,102,0.08);
+  font-size: 1rem;
+}
+
+.pin-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: #9a9a9a;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pin-card .actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 14px;
+  justify-content: flex-end;
+}
+
+.pin-card .actions button {
+  min-width: 110px;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+}
+
+.pin-card .message {
+  color: #c62828;
+  margin-top: 12px;
+  font-size: 0.95rem;
+}
+
+.pin-card .loading-state {
+  margin-top: 12px;
 }
 
 /* Success State */

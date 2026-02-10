@@ -15,9 +15,9 @@
       <button class="logout ghost" type="button" mat-stroked-button>Log out</button>
     </div>
     <div class="topbar-actions">
-      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard">Dashboard</button>
-      <button class="ghost" type="button" mat-stroked-button routerLink="/history">History</button>
-      <button class="primary" type="button" mat-flat-button routerLink="/transfer">New Transfer</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
       <button class="ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
     </div>
   </header>
@@ -35,17 +35,18 @@
       <div class="transactions-list">
         <div *ngFor="let transaction of displayedTransactions; let i = index" 
              class="transaction-item"
-             [ngClass]="transaction.type"
+             [ngClass]="[ transaction.type, transaction.status === 'failed' ? 'failed' : '' ]"
              (click)="openTransactionDetail(transaction, i)">
-          <div class="transaction-arrow" [ngClass]="transaction.type">
-            <span class="arrow-icon">{{ transaction.type === 'credit' ? '←' : '→' }}</span>
+          <div class="transaction-arrow" [ngClass]="[ transaction.type, transaction.status === 'failed' ? 'failed' : '' ]">
+            <span class="arrow-icon" *ngIf="transaction.status !== 'failed'">{{ transaction.type === 'credit' ? '←' : '→' }}</span>
           </div>
           <div class="transaction-info">
             <p class="transaction-account">{{ transaction.accountNumber }}</p>
             <p class="transaction-date">{{ transaction.date | date: 'MMM dd, yyyy' }}</p>
           </div>
-          <div class="transaction-amount" [ngClass]="transaction.type">
-            {{ transaction.type === 'credit' ? '+' : '-' }}₹{{ transaction.amount }}
+          <div class="transaction-amount" [ngClass]="transaction.status === 'failed' ? 'failed' : transaction.type">
+            <ng-container *ngIf="transaction.status === 'failed'">₹{{ transaction.amount }}</ng-container>
+            <ng-container *ngIf="transaction.status !== 'failed'">{{ transaction.type === 'credit' ? '+' : '-' }}₹{{ transaction.amount }}</ng-container>
           </div>
         </div>
       </div>
@@ -60,15 +61,16 @@
   <div *ngIf="selectedTransaction" class="transaction-detail-modal">
     <button class="close-button" (click)="closeTransactionDetail()">✕</button>
     <div class="detail-content">
-      <div class="detail-header" [ngClass]="selectedTransaction.type">
-        <div class="detail-arrow" [ngClass]="selectedTransaction.type">
-          <span class="arrow-icon-large">{{ selectedTransaction.type === 'credit' ? '←' : '→' }}</span>
+      <div class="detail-header" [ngClass]="[ selectedTransaction.type, selectedTransaction.status === 'failed' ? 'failed' : '' ]">
+        <div class="detail-arrow" [ngClass]="[ selectedTransaction.type, selectedTransaction.status === 'failed' ? 'failed' : '' ]">
+          <span class="arrow-icon-large" *ngIf="selectedTransaction.status !== 'failed'">{{ selectedTransaction.type === 'credit' ? '←' : '→' }}</span>
         </div>
         <p class="detail-type">{{ selectedTransaction.type === 'credit' ? 'Money Received' : 'Money Sent' }}</p>
       </div>
       <div class="detail-info">
-        <p class="detail-amount" [ngClass]="selectedTransaction.type">
-          {{ selectedTransaction.type === 'credit' ? '+' : '-' }}₹{{ selectedTransaction.amount }}
+        <p class="detail-amount" [ngClass]="selectedTransaction.status === 'failed' ? 'failed' : selectedTransaction.type">
+          <ng-container *ngIf="selectedTransaction.status === 'failed'">₹{{ selectedTransaction.amount }}</ng-container>
+          <ng-container *ngIf="selectedTransaction.status !== 'failed'">{{ selectedTransaction.type === 'credit' ? '+' : '-' }}₹{{ selectedTransaction.amount }}</ng-container>
         </p>
         <div class="detail-grid">
           <div class="detail-item">
@@ -101,9 +103,9 @@
   </div>
 
   <nav class="bottom-nav">
-    <button type="button" class="nav-item" mat-button routerLink="/dashboard">Dashboard</button>
-    <button type="button" class="nav-item active" mat-button routerLink="/history">History</button>
-    <button type="button" class="nav-item" mat-button routerLink="/transfer">New Transfer</button>
+    <button type="button" class="nav-item" mat-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+    <button type="button" class="nav-item" mat-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+    <button type="button" class="nav-item" mat-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
     <button type="button" class="nav-item logout" mat-button (click)="onLogout()">Log out</button>
   </nav>
 </section>

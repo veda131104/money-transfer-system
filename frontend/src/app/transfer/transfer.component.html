@@ -15,9 +15,9 @@
       <button class="logout ghost" type="button" mat-stroked-button>Log out</button>
     </div>
     <div class="topbar-actions">
-      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard">Dashboard</button>
-      <button class="ghost" type="button" mat-stroked-button routerLink="/history">History</button>
-      <button class="primary" type="button" mat-flat-button routerLink="/transfer" routerLinkActive="active">New Transfer</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
       <button class="ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
     </div>
   </header>
@@ -63,6 +63,7 @@
           <p>To Account Number</p>
           <!-- Input for Account Number -->
           <input type="text" id="account-number" placeholder="Enter account number" (input)="onAccountNumberInput($event)" />
+          <p class="account-hint" *ngIf="accountNumber && accountNumber.length < 12" style="color: #f57c00; font-size: 0.8rem; margin-top: -0.5rem;">12 digits required ({{ accountNumber.length }}/12)</p>
           
           <p>&#8377;Amount</p>
           <!-- Input for Amount -->
@@ -71,13 +72,43 @@
           <button class="send-button" type="button" mat-flat-button (click)="onSendMoney()">Send Money</button>
         </div>
       </div>
+
+      <!-- PIN Modal Overlay -->
+      <div *ngIf="showPinModal" class="modal-overlay" (click)="closePinModal()"></div>
+
+      <div *ngIf="showPinModal" class="pin-modal">
+        <mat-card class="card pin-card" (click)="$event.stopPropagation()">
+          <h3>Enter PIN to confirm transfer</h3>
+          <p *ngIf="successDetails.accountNumber"><strong>To:</strong> {{ successDetails.accountNumber }}</p>
+          <p *ngIf="successDetails.amount"><strong>Amount:</strong> ₹{{ successDetails.amount }}</p>
+
+          <div *ngIf="!isSuccess">
+            <div class="pin-input-container">
+              <input [type]="pinVisible ? 'text' : 'password'" maxlength="4" placeholder="Enter 4-digit PIN" (input)="onPinInput($event)" />
+              <button type="button" class="pin-toggle" (click)="togglePinVisibility()">
+                {{ pinVisible ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+            <div class="actions">
+              <button mat-flat-button color="primary" (click)="onConfirmPin()">Confirm</button>
+              <button mat-stroked-button (click)="closePinModal()">Cancel</button>
+            </div>
+            <p class="message" *ngIf="pinMessage">{{ pinMessage }}</p>
+
+            <div *ngIf="pinLoading" class="loading-state">
+              <div class="loading-spinner"></div>
+              <p class="loading-text">Processing your transfer...</p>
+            </div>
+          </div>
+        </mat-card>
+      </div>
     </mat-card>
   </main>
 
   <nav class="bottom-nav">
-    <button type="button" class="nav-item" mat-button routerLink="/dashboard">Dashboard</button>
-    <button type="button" class="nav-item" mat-button routerLink="/history">History</button>
-    <button type="button" class="nav-item active" mat-button routerLink="/transfer">New Transfer</button>
+    <button type="button" class="nav-item" mat-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+    <button type="button" class="nav-item" mat-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+    <button type="button" class="nav-item" mat-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
     <button type="button" class="nav-item logout" mat-button (click)="onLogout()">Log out</button>
   </nav>
 </section>
