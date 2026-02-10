@@ -1,0 +1,109 @@
+<section class="dashboard-shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">PF</span>
+      <div>
+        <p class="brand-name">PayFid</p>
+        <p class="brand-tag">Transfer Command Center</p>
+      </div>
+    </div>
+    <div class="account">
+      <div>
+        <p class="account-label">Account holder</p>
+        <p class="account-name">Aarav Sharma</p>
+      </div>
+      <button class="logout ghost" type="button" mat-stroked-button>Log out</button>
+    </div>
+    <div class="topbar-actions">
+      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard">Dashboard</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/history">History</button>
+      <button class="primary" type="button" mat-flat-button routerLink="/transfer">New Transfer</button>
+      <button class="ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
+    </div>
+  </header>
+
+  <main class="history-grid">
+    <mat-card class="card balance-card">
+      <div class="balance-section">
+        <p class="balance-label">Current Balance</p>
+        <p class="balance-value">₹2,48,930.50</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="card transactions-card">
+      <h2 class="transactions-header">Transaction History</h2>
+      <div class="transactions-list">
+        <div *ngFor="let transaction of displayedTransactions; let i = index" 
+             class="transaction-item"
+             [ngClass]="transaction.type"
+             (click)="openTransactionDetail(transaction, i)">
+          <div class="transaction-arrow" [ngClass]="transaction.type">
+            <span class="arrow-icon">{{ transaction.type === 'credit' ? '←' : '→' }}</span>
+          </div>
+          <div class="transaction-info">
+            <p class="transaction-account">{{ transaction.accountNumber }}</p>
+            <p class="transaction-date">{{ transaction.date | date: 'MMM dd, yyyy' }}</p>
+          </div>
+          <div class="transaction-amount" [ngClass]="transaction.type">
+            {{ transaction.type === 'credit' ? '+' : '-' }}₹{{ transaction.amount }}
+          </div>
+        </div>
+      </div>
+      <button *ngIf="hasMoreTransactions" class="load-more-button" (click)="loadMore()">Load More</button>
+    </mat-card>
+  </main>
+
+  <!-- Modal Overlay -->
+  <div *ngIf="selectedTransaction" class="modal-overlay" (click)="closeTransactionDetail()"></div>
+
+  <!-- Detailed Transaction Modal -->
+  <div *ngIf="selectedTransaction" class="transaction-detail-modal">
+    <button class="close-button" (click)="closeTransactionDetail()">✕</button>
+    <div class="detail-content">
+      <div class="detail-header" [ngClass]="selectedTransaction.type">
+        <div class="detail-arrow" [ngClass]="selectedTransaction.type">
+          <span class="arrow-icon-large">{{ selectedTransaction.type === 'credit' ? '←' : '→' }}</span>
+        </div>
+        <p class="detail-type">{{ selectedTransaction.type === 'credit' ? 'Money Received' : 'Money Sent' }}</p>
+      </div>
+      <div class="detail-info">
+        <p class="detail-amount" [ngClass]="selectedTransaction.type">
+          {{ selectedTransaction.type === 'credit' ? '+' : '-' }}₹{{ selectedTransaction.amount }}
+        </p>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <p class="detail-label">Account Number</p>
+            <p class="detail-value">{{ selectedTransaction.accountNumber }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Date</p>
+            <p class="detail-value">{{ selectedTransaction.date | date: 'MMM dd, yyyy' }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Time</p>
+            <p class="detail-value">{{ selectedTransaction.date | date: 'hh:mm a' }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Status</p>
+            <p class="detail-value" [ngClass]="'status-' + selectedTransaction.status">{{ selectedTransaction.status | titlecase }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Reference ID</p>
+            <p class="detail-value">{{ selectedTransaction.referenceId }}</p>
+          </div>
+          <div class="detail-item" *ngIf="selectedTransaction.description">
+            <p class="detail-label">Description</p>
+            <p class="detail-value">{{ selectedTransaction.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button type="button" class="nav-item" mat-button routerLink="/dashboard">Dashboard</button>
+    <button type="button" class="nav-item active" mat-button routerLink="/history">History</button>
+    <button type="button" class="nav-item" mat-button routerLink="/transfer">New Transfer</button>
+    <button type="button" class="nav-item logout" mat-button (click)="onLogout()">Log out</button>
+  </nav>
+</section>
