@@ -120,6 +120,76 @@ export class HistoryComponent implements OnInit {
         status: 'completed',
         referenceId: 'TXN008',
         description: 'Investment return'
+      },
+      {
+        id: '9',
+        accountNumber: '6666777788',
+        amount: '25000',
+        date: new Date(2026, 1, 2, 8, 45),
+        type: 'credit',
+        status: 'completed',
+        referenceId: 'TXN009',
+        description: 'Bonus credit'
+      },
+      {
+        id: '10',
+        accountNumber: '3333444455',
+        amount: '4500',
+        date: new Date(2026, 0, 31, 14, 20),
+        type: 'debit',
+        status: 'completed',
+        referenceId: 'TXN010',
+        description: 'Insurance premium'
+      },
+      {
+        id: '11',
+        accountNumber: '5555666688',
+        amount: '12000',
+        date: new Date(2026, 0, 30, 10, 10),
+        type: 'credit',
+        status: 'completed',
+        referenceId: 'TXN011',
+        description: 'Dividend payment'
+      },
+      {
+        id: '12',
+        accountNumber: '8888999900',
+        amount: '6000',
+        date: new Date(2026, 0, 29, 16, 35),
+        type: 'debit',
+        status: 'completed',
+        referenceId: 'TXN012',
+        description: 'Payment to contractor'
+      },
+      {
+        id: '13',
+        accountNumber: '1010202030',
+        amount: '18500',
+        date: new Date(2026, 0, 28, 9, 0),
+        type: 'credit',
+        status: 'completed',
+        referenceId: 'TXN013',
+        description: 'Project completion payment'
+      },
+      {
+        id: '14',
+        accountNumber: '9090919192',
+        amount: '3200',
+        date: new Date(2026, 0, 27, 13, 45),
+        type: 'debit',
+        status: 'completed',
+        referenceId: 'TXN014',
+        description: 'Groceries and supplies'
+      },
+      {
+        id: '15',
+        accountNumber: '4545464748',
+        amount: '9500',
+        date: new Date(2026, 0, 26, 11, 20),
+        type: 'credit',
+        status: 'completed',
+        referenceId: 'TXN015',
+        description: 'Consulting fee received'
       }
     ];
 
