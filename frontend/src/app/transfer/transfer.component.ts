@@ -15,6 +15,7 @@ import { TransactionService, Transaction } from '../services/transaction.service
 export class TransferComponent {
   accountNumber: string = '';
   amount: string = '';
+  description: string = '';
   isLoading: boolean = false;
   isSuccess: boolean = false;
   successDetails: { accountNumber: string; amount: string } = {
@@ -51,6 +52,11 @@ export class TransferComponent {
       input.value = value;
     }
     this.amount = input.value;
+  }
+
+  onDescriptionInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.description = input.value;
   }
 
   onSendMoney(): void {
@@ -168,6 +174,7 @@ export class TransferComponent {
     this.isLoading = false;
     this.accountNumber = '';
     this.amount = '';
+    this.description = '';
     const inputs = document.querySelectorAll('.transfer input');
     inputs.forEach(input => (input as HTMLInputElement).value = '');
   }

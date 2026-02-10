@@ -1,0 +1,11 @@
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #7b1fa2;
+  z-index: 9999;
+  pointer-events: none;
+}
