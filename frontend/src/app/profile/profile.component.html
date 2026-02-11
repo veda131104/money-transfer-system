@@ -10,14 +10,17 @@
     <div class="account">
       <div>
         <p class="account-label">Account holder</p>
-        <p class="account-name">Aarav Sharma</p>
+        <p class="account-name">{{ profileData.name }}</p>
       </div>
       <button class="logout ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
     </div>
     <div class="topbar-actions">
-      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
-      <button class="ghost" type="button" mat-stroked-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
-      <button class="ghost" type="button" mat-stroked-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard" routerLinkActive="active"
+        [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/history" routerLinkActive="active"
+        [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/transfer" routerLinkActive="active"
+        [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
       <button class="ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
     </div>
   </header>
@@ -25,76 +28,158 @@
   <main class="profile-grid">
     <mat-card class="card profile-header">
       <div class="profile-hero">
-        <div class="profile-avatar">{{ profileData.name.charAt(0) }}{{ profileData.name.split(' ')[1].charAt(0) }}</div>
+        <div class="profile-avatar">{{ getInitials() }}</div>
         <div class="profile-title">
           <h1>{{ profileData.name }}</h1>
           <p class="profile-status">{{ profileData.accountStatus }}</p>
         </div>
       </div>
-      <button class="edit-button" type="button" mat-stroked-button (click)="onEditProfile()">Edit Profile</button>
+      @if (!isEditing) {
+      <div class="profile-actions">
+        <button class="edit-button" type="button" mat-stroked-button (click)="onEditProfile()">
+          {{ isNewUser ? 'Account Setup' : 'Edit Profile' }}
+        </button>
+        @if (!isNewUser) {
+        <button class="pin-button" type="button" mat-stroked-button (click)="onOpenPinModal()">
+          Set PIN
+        </button>
+        }
+      </div>
+      } @else {
+      <div class="edit-actions">
+        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="profileForm.invalid">Save</button>
+        <button mat-button (click)="onCancel()">Cancel</button>
+      </div>
+      }
     </mat-card>
 
-    <mat-card class="card account-details">
-      <h2 class="section-title">Account Information</h2>
-      <div class="details-grid">
-        <div class="detail-item">
-          <p class="detail-label">Account Number</p>
-          <p class="detail-value">{{ profileData.accountNumber }}</p>
-        </div>
-        <div class="detail-item">
-          <p class="detail-label">Account Type</p>
-          <p class="detail-value">{{ profileData.accountType }}</p>
-        </div>
-        <div class="detail-item">
-          <p class="detail-label">Member Since</p>
-          <p class="detail-value">{{ profileData.joinDate }}</p>
-        </div>
-        <div class="detail-item">
-          <p class="detail-label">Account Status</p>
-          <p class="detail-value status-active">{{ profileData.accountStatus }}</p>
+    <!-- PIN Modal -->
+    <div class="modal-overlay" *ngIf="isPinModalOpen">
+      <div class="modal-card" [formGroup]="pinForm">
+        <h3>Set Transaction PIN</h3>
+        <p>Enter a 4-digit PIN for securing your transfers.</p>
+        <mat-form-field appearance="outline">
+          <mat-label>New PIN</mat-label>
+          <input matInput type="password" maxlength="4" placeholder="1234" formControlName="pin"
+            (input)="pinForm.get('pin')?.setValue($any($event.target).value)">
+          @if (pinForm.get('pin')?.invalid && (pinForm.get('pin')?.dirty || pinForm.get('pin')?.touched)) {
+          <mat-error>
+            @if (pinForm.get('pin')?.hasError('required')) { PIN is required }
+            @if (pinForm.get('pin')?.hasError('pattern')) { PIN must be 4 digits }
+          </mat-error>
+          }
+          @if (pinError) {
+          <mat-hint color="warn" style="color: #f44336; font-size: 0.75rem; margin-top: 4px; display: block;">
+            {{ pinError }}
+          </mat-hint>
+          }
+        </mat-form-field>
+        <div class="modal-actions">
+          <button mat-flat-button color="primary" [disabled]="pinForm.invalid" (click)="onSavePin()">Save PIN</button>
+          <button mat-button (click)="onClosePinModal()">Cancel</button>
         </div>
       </div>
-    </mat-card>
+    </div>
 
-    <mat-card class="card personal-details">
-      <h2 class="section-title">Personal Information</h2>
-      <div class="details-grid">
-        <div class="detail-item">
-          <p class="detail-label">Email Address</p>
-          <p class="detail-value">{{ profileData.email }}</p>
+    <form [formGroup]="profileForm">
+      <mat-card class="card account-details">
+        <h2 class="section-title">Account Information</h2>
+        <div class="details-grid">
+          <div class="detail-item">
+            <p class="detail-label">Account Number</p>
+            <p class="detail-value">{{ profileData.accountNumber }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Account Type</p>
+            <p class="detail-value">{{ profileData.accountType }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Member Since</p>
+            <p class="detail-value">{{ profileData.joinDate }}</p>
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Account Status</p>
+            <p class="detail-value status-active">{{ profileData.accountStatus }}</p>
+          </div>
         </div>
-        <div class="detail-item">
-          <p class="detail-label">Phone Number</p>
-          <p class="detail-value">{{ profileData.phoneNumber }}</p>
-        </div>
-        <div class="detail-item full-width">
-          <p class="detail-label">Address</p>
-          <p class="detail-value">{{ profileData.address }}</p>
-        </div>
-      </div>
-    </mat-card>
+      </mat-card>
 
-    <mat-card class="card bank-details">
-      <h2 class="section-title">Bank Information</h2>
-      <div class="details-grid">
-        <div class="detail-item">
-          <p class="detail-label">Bank Name</p>
-          <p class="detail-value">{{ profileData.bankName }}</p>
+      <mat-card class="card personal-details">
+        <h2 class="section-title">Personal Information</h2>
+        <div class="details-grid">
+          <div class="detail-item">
+            <p class="detail-label">Email Address</p>
+            @if (!isEditing) {
+            <p class="detail-value">{{ profileData.email }}</p>
+            } @else {
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="email">
+            </mat-form-field>
+            }
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Phone Number</p>
+            @if (!isEditing) {
+            <p class="detail-value">{{ profileData.phoneNumber }}</p>
+            } @else {
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="phoneNumber">
+            </mat-form-field>
+            }
+          </div>
+          <div class="detail-item full-width">
+            <p class="detail-label">Address</p>
+            @if (!isEditing) {
+            <p class="detail-value">{{ profileData.address }}</p>
+            } @else {
+            <mat-form-field appearance="outline">
+              <textarea matInput formControlName="address" rows="3"></textarea>
+            </mat-form-field>
+            }
+          </div>
         </div>
-        <div class="detail-item">
-          <p class="detail-label">Branch Name</p>
-          <p class="detail-value">{{ profileData.branchName }}</p>
+      </mat-card>
+
+      <mat-card class="card bank-details">
+        <h2 class="section-title">Bank Information</h2>
+        <div class="details-grid">
+          <div class="detail-item">
+            <p class="detail-label">Bank Name</p>
+            @if (!isEditing) {
+            <p class="detail-value">{{ profileData.bankName }}</p>
+            } @else {
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="bankName">
+            </mat-form-field>
+            }
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">Branch Name</p>
+            @if (!isEditing) {
+            <p class="detail-value">{{ profileData.branchName }}</p>
+            } @else {
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="branchName">
+            </mat-form-field>
+            }
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">IFSC Code</p>
+            @if (!isEditing) {
+            <p class="detail-value">{{ profileData.ifscCode }}</p>
+            } @else {
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="ifscCode">
+            </mat-form-field>
+            }
+          </div>
+          <div class="detail-item">
+            <p class="detail-label">UPI ID</p>
+            <p class="detail-value">{{ profileData.upiId }}</p>
+          </div>
         </div>
-        <div class="detail-item">
-          <p class="detail-label">IFSC Code</p>
-          <p class="detail-value">{{ profileData.ifscCode }}</p>
-        </div>
-        <div class="detail-item">
-          <p class="detail-label">UPI ID</p>
-          <p class="detail-value">{{ profileData.upiId }}</p>
-        </div>
-      </div>
-    </mat-card>
+      </mat-card>
+    </form>
   </main>
 </section>
 

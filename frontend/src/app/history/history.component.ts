@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TransactionService, Transaction } from '../services/transaction.service';
+import { AccountSetupService } from '../services/account-setup.service';
+import { AuthService } from '../services/auth.service';
+import { Subject, filter, switchMap, takeUntil, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-history',
@@ -12,7 +15,10 @@ import { TransactionService, Transaction } from '../services/transaction.service
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss'
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private destroy$ = new Subject<void>();
+  private refresh$ = new Subject<void>();
   routerLinkActiveOptions = { exact: true };
   allTransactions: Transaction[] = [];
   displayedTransactions: Transaction[] = [];
@@ -20,23 +26,112 @@ export class HistoryComponent implements OnInit {
   itemsPerPage: number = 5;
   currentPage: number = 0;
   hasMoreTransactions: boolean = true;
+  currentUserAccountNumber: string = 'loading...';
+  userName: string = 'User';
+  currentBalance: string = '--.--';
+  isLoading: boolean = false;
 
-  constructor(private router: Router, private transactionService: TransactionService) {}
+  constructor(
+    private router: Router,
+    private transactionService: TransactionService,
+    private accountSetupService: AccountSetupService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    // Initialize with sample data if storage is empty
-    if (this.transactionService.getTransactions().length === 0) {
-      this.initializeTransactions();
-    }
-    
-    // Subscribe to transactions
-    this.transactionService.transactions$.subscribe(() => {
+    console.log('🔍 [History] Component initializing...');
+
+    // 1. Listen for router events to refresh data on every navigation to this component
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      filter(() => this.router.url.includes('/history')),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      console.log('🚀 [History] Navigation detected, triggering refresh...');
+      this.refresh$.next();
+    });
+
+    // 2. Main reactive data pipeline using switchMap for sequential requests
+    this.refresh$.pipe(
+      tap(() => {
+        this.isLoading = true;
+        this.cdr.detectChanges();
+        console.log('📡 [History] Starting fresh data fetch...');
+      }),
+      switchMap(() => {
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+          console.warn('⚠️ [History] No user logged in');
+          return of(null);
+        }
+        this.userName = user.name;
+        return this.accountSetupService.getAccountByUser(user.name);
+      }),
+      switchMap(details => {
+        if (!details || !details.accountNumber) {
+          console.warn('⚠️ [History] Bank details missing account number');
+          return of(null);
+        }
+        this.currentUserAccountNumber = details.accountNumber;
+        // Balance UI update might happen here if we had partial data, but we'll wait for account
+        return this.accountSetupService.getAccountByNumber(details.accountNumber);
+      }),
+      switchMap(account => {
+        if (!account || account.balance === undefined) {
+          console.warn('⚠️ [History] Account data missing or invalid');
+          return of(null);
+        }
+        this.currentBalance = account.balance.toFixed(2);
+        console.log('💰 [History] Balance loaded:', this.currentBalance);
+        this.cdr.detectChanges(); // Update UI with balance immediately
+
+        if (account.id) {
+          console.log('📡 [History] Fetching transactions for account ID:', account.id);
+          return this.transactionService.getAccountHistory(account.id);
+        }
+        return of([]);
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (txns) => {
+        this.isLoading = false;
+        if (txns) {
+          console.log('✅ [History] Data pipeline complete, transactions count:', txns.length);
+          this.displayedTransactions = [];
+          this.currentPage = 0;
+          this.loadMore();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('❌ [History] Data pipeline error:', err);
+        this.cdr.detectChanges();
+      }
+    });
+
+    // 3. Subscribe to service-side transaction updates (like after a transfer confirms)
+    this.transactionService.transactions$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      console.log('🔄 [History] Service transactions updated, syncing UI...');
       this.displayedTransactions = [];
       this.currentPage = 0;
       this.loadMore();
+      this.cdr.detectChanges();
     });
-    
-    this.loadMore();
+
+    // Initial trigger
+    this.refresh$.next();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadComponentData(userName: string): void {
+    // Legacy method, moved logic to refresh$ pipeline
   }
 
   initializeTransactions(): void {
@@ -201,10 +296,10 @@ export class HistoryComponent implements OnInit {
     const startIndex = this.currentPage * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     const newTransactions = this.allTransactions.slice(startIndex, endIndex);
-    
+
     this.displayedTransactions = [...this.displayedTransactions, ...newTransactions];
     this.currentPage++;
-    
+
     this.hasMoreTransactions = endIndex < this.allTransactions.length;
   }
 
@@ -221,6 +316,48 @@ export class HistoryComponent implements OnInit {
     this.displayedTransactions = [];
     this.currentPage = 0;
     this.loadMore();
+  }
+
+  /**
+   * Determines the sign (+/-) for a transaction based on user perspective
+   * For transfers: + if user is receiver, - if user is sender
+   * For credit/debit: follows the type
+   */
+  getTransactionSign(transaction: Transaction): string {
+    if (!this.currentUserAccountNumber || this.currentUserAccountNumber === 'loading...') {
+      return '';
+    }
+
+    if (transaction.fromAccountNumber && transaction.toAccountNumber) {
+      if (transaction.toAccountNumber === this.currentUserAccountNumber) {
+        return '+';
+      }
+      if (transaction.fromAccountNumber === this.currentUserAccountNumber) {
+        return '-';
+      }
+    }
+
+    return transaction.type === 'credit' ? '+' : '-';
+  }
+
+  /**
+   * Determines the display type (credit/debit) based on user perspective
+   */
+  getDisplayType(transaction: Transaction): 'credit' | 'debit' {
+    if (!this.currentUserAccountNumber || this.currentUserAccountNumber === 'loading...') {
+      return transaction.type === 'credit' ? 'credit' : 'debit';
+    }
+
+    if (transaction.fromAccountNumber && transaction.toAccountNumber) {
+      if (transaction.toAccountNumber === this.currentUserAccountNumber) {
+        return 'credit';
+      }
+      if (transaction.fromAccountNumber === this.currentUserAccountNumber) {
+        return 'debit';
+      }
+    }
+
+    return transaction.type === 'credit' ? 'credit' : 'debit';
   }
 
   onLogout(): void {

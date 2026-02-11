@@ -1,9 +1,11 @@
-import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TransactionService, Transaction } from '../services/transaction.service';
+import { AuthService } from '../services/auth.service';
+import { AccountSetupService } from '../services/account-setup.service';
 
 @Component({
   selector: 'app-transfer',
@@ -13,6 +15,7 @@ import { TransactionService, Transaction } from '../services/transaction.service
   styleUrl: './transfer.component.scss',
 })
 export class TransferComponent {
+  private cdr = inject(ChangeDetectorRef);
   accountNumber: string = '';
   amount: string = '';
   description: string = '';
@@ -29,9 +32,45 @@ export class TransferComponent {
   pinLoading: boolean = false;
   pinVisible: boolean = false;
   pinErrorTimer: any = null;
+  userPin: string = '';
   routerLinkActiveOptions = { exact: true };
 
-  constructor(private router: Router, private ngZone: NgZone, private cdr: ChangeDetectorRef, private transactionService: TransactionService) {}
+  // Personalized data
+  userName: string = 'User';
+  myAccountNumber: string = '000000000000';
+
+  constructor(
+    private router: Router,
+    private transactionService: TransactionService,
+    private authService: AuthService,
+    private accountSetupService: AccountSetupService
+  ) { }
+
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.userName = user.name;
+      this.accountSetupService.getAccountByUser(user.name).subscribe({
+        next: (details: any) => {
+          if (details) {
+            this.myAccountNumber = details.accountNumber;
+            this.userPin = details.pin || '1234'; // Fallback to 1234 if not set
+            this.cdr.detectChanges();
+          }
+        },
+        error: (err: any) => console.error('Error fetching bank details:', err)
+      });
+    }
+  }
+
+  getInitials(): string {
+    if (!this.userName) return 'U';
+    const names = this.userName.split(' ');
+    if (names.length >= 2) {
+      return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+    }
+    return this.userName.charAt(0).toUpperCase();
+  }
 
   onAccountNumberInput(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -43,7 +82,7 @@ export class TransferComponent {
   onAmountInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const value = input.value.replace(/[^0-9.]/g, '');
-    
+
     // Ensure only one decimal point
     const parts = value.split('.');
     if (parts.length > 2) {
@@ -108,7 +147,7 @@ export class TransferComponent {
       return;
     }
 
-    const CORRECT_PIN = '1234';
+    const CORRECT_PIN = this.userPin;
     if (this.pin !== CORRECT_PIN) {
       // Add failed transaction to history
       const failedTxn: Transaction = {
@@ -133,31 +172,53 @@ export class TransferComponent {
       return;
     }
 
-    // Correct PIN: show buffering UI and complete transfer
+    if (this.myAccountNumber === '000000000000') {
+      this.pinMessage = 'Loading your account details... Please try again in a moment.';
+      return;
+    }
+
+    // Correct PIN: call backend
     this.pinLoading = true;
     this.pinMessage = '';
-    this.ngZone.runOutsideAngular(() => {
-      setTimeout(() => {
-        this.ngZone.run(() => {
-          this.pinLoading = false;
-          this.showPinModal = false;
-          this.isLoading = false;
-          this.isSuccess = true;
 
-          const newTransaction: Transaction = {
-            id: Date.now().toString(),
-            accountNumber: this.accountNumber,
-            amount: this.amount,
-            date: new Date(),
-            type: 'debit',
-            status: 'completed',
-            referenceId: this.transactionService.generateReferenceId(),
-            description: 'Transfer completed'
-          };
-          this.transactionService.addTransaction(newTransaction);
-          this.cdr.detectChanges();
-        });
-      }, 2000);
+    const payload = {
+      fromAccountNumber: this.myAccountNumber,
+      toAccountNumber: this.accountNumber,
+      amount: parseFloat(this.amount)
+    };
+
+    this.transactionService.executeTransfer(payload).subscribe({
+      next: (response: any) => {
+        this.pinLoading = false;
+        this.showPinModal = false;
+        this.isLoading = false;
+        this.isSuccess = true;
+
+        const newTransaction: Transaction = {
+          id: response.transactionId?.toString() || Date.now().toString(),
+          accountNumber: this.accountNumber,
+          fromAccountNumber: this.myAccountNumber,  // Sender's account
+          toAccountNumber: this.accountNumber,       // Receiver's account
+          amount: this.amount,
+          date: new Date(),
+          type: 'transfer',
+          status: response.status || 'SUCCESS',
+          referenceId: this.transactionService.generateReferenceId(),
+          description: this.description || 'Transfer completed'
+        };
+        this.transactionService.addTransaction(newTransaction);
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.pinLoading = false;
+        console.error('Full Transfer Error Objekt:', err);
+        const backendMessage = err.error?.message;
+        const statusText = err.statusText;
+        const status = err.status;
+
+        this.pinMessage = backendMessage || (statusText ? `${statusText} (${status})` : 'Transaction failed. Please try again.');
+        this.cdr.detectChanges();
+      }
     });
   }
 

@@ -23,4 +23,20 @@ export class AccountSetupService {
   setupUpi(id: number, upiId: string): Observable<any> {
     return this.http.post(`${this.base}/${id}/upi`, { upiId });
   }
+
+  getAccountByUser(userName: string): Observable<any> {
+    return this.http.get(`${this.base}/user/${userName}`);
+  }
+
+  updateAccount(userName: string, payload: any): Observable<any> {
+    return this.http.put(`${this.base}/user/${userName}`, payload);
+  }
+
+  getAccountByNumber(accountNumber: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/v1/accounts/number/${accountNumber}`);
+  }
+
+  setPin(userName: string, pin: string): Observable<any> {
+    return this.http.post(`${this.base}/user/${userName}/pin`, { pin });
+  }
 }

@@ -2,7 +2,10 @@ package com.company.mts.controller;
 
 import com.company.mts.dto.AccountSetupRequest;
 import com.company.mts.dto.AccountSetupResponse;
+import com.company.mts.entity.Account;
+import com.company.mts.entity.AccountStatus;
 import com.company.mts.entity.BankDetails;
+import com.company.mts.repository.AccountRepository;
 import com.company.mts.service.BankDetailsService;
 import com.company.mts.service.EmailService;
 import org.springframework.http.HttpStatus;
@@ -18,29 +21,47 @@ public class AccountSetupController {
 
     private final BankDetailsService service;
     private final EmailService emailService;
+    private final AccountRepository accountRepository;
     // Simple in-memory OTP store for demo purposes
     private final Map<String, String> otpStore = new HashMap<>();
 
-    public AccountSetupController(BankDetailsService service, EmailService emailService) {
+    public AccountSetupController(BankDetailsService service, EmailService emailService,
+            AccountRepository accountRepository) {
         this.service = service;
         this.emailService = emailService;
+        this.accountRepository = accountRepository;
     }
 
     @PostMapping
     public ResponseEntity<AccountSetupResponse> create(@RequestBody AccountSetupRequest request) {
-        String generatedUpiId = generateUpiId(request.getContact(), request.getBankName());
+        String generatedUpiId = generateUpiId(request.getEmail(), request.getBankName());
 
         BankDetails details = BankDetails.builder()
                 .accountNumber(request.getAccountNumber())
                 .bankName(request.getBankName())
                 .ifscCode(request.getIfscCode())
-                .contact(request.getContact())
+                .branchName(request.getBranchName())
+                .address(request.getAddress())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .userName(request.getUserName())
                 .creditCardNumber(request.getCreditCardNumber())
                 .cvv(request.getCvv())
                 .upiId(generatedUpiId)
                 .build();
 
         BankDetails saved = service.save(details);
+
+        // SYNC: Create an Account entry if it doesn't exist
+        if (!accountRepository.existsByAccountNumber(saved.getAccountNumber())) {
+            Account account = Account.builder()
+                    .accountNumber(saved.getAccountNumber())
+                    .holderName(saved.getUserName())
+                    .balance(new java.math.BigDecimal("10000.00")) // Initial balance for new users
+                    .status(AccountStatus.ACTIVE)
+                    .build();
+            accountRepository.save(account);
+        }
 
         AccountSetupResponse resp = new AccountSetupResponse(saved.getId(), saved.getAccountNumber(),
                 saved.getUpiId());
@@ -80,6 +101,41 @@ public class AccountSetupController {
         BankDetails updated = service.setupUpi(id, upiId);
         return ResponseEntity
                 .ok(new AccountSetupResponse(updated.getId(), updated.getAccountNumber(), updated.getUpiId()));
+    }
+
+    @GetMapping("/user/{userName}")
+    public ResponseEntity<BankDetails> getByUserName(@PathVariable String userName) {
+        BankDetails details = service.findByUserName(userName)
+                .orElseThrow(() -> new IllegalArgumentException("Bank details not found for user: " + userName));
+        return ResponseEntity.ok(details);
+    }
+
+    @PutMapping("/user/{userName}")
+    public ResponseEntity<BankDetails> update(@PathVariable String userName, @RequestBody AccountSetupRequest request) {
+        BankDetails existing = service.findByUserName(userName)
+                .orElseThrow(() -> new IllegalArgumentException("Bank details not found for user: " + userName));
+
+        existing.setBankName(request.getBankName());
+        existing.setIfscCode(request.getIfscCode());
+        existing.setBranchName(request.getBranchName());
+        existing.setAddress(request.getAddress());
+        existing.setEmail(request.getEmail());
+        existing.setPhoneNumber(request.getPhoneNumber());
+        existing.setCreditCardNumber(request.getCreditCardNumber());
+        existing.setCvv(request.getCvv());
+
+        BankDetails saved = service.save(existing);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PostMapping("/user/{userName}/pin")
+    public ResponseEntity<BankDetails> setPin(@PathVariable String userName, @RequestBody Map<String, String> body) {
+        String pin = body.get("pin");
+        if (pin == null || pin.length() != 4) {
+            throw new IllegalArgumentException("PIN must be 4 digits");
+        }
+        BankDetails updated = service.updatePin(userName, pin);
+        return ResponseEntity.ok(updated);
     }
 
     @PostMapping("/send-otp")

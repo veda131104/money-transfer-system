@@ -7,12 +7,15 @@ import com.company.mts.entity.AuthUser;
 import com.company.mts.exception.DuplicateUserException;
 import com.company.mts.exception.InvalidCredentialsException;
 import com.company.mts.repository.AuthUserRepository;
+import org.springframework.stereotype.Service;
 import com.company.mts.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
+@Slf4j
 public class AuthService {
 
     @Autowired
@@ -25,23 +28,23 @@ public class AuthService {
     private JwtTokenProvider tokenProvider;
 
     public AuthUser signup(SignupRequest request) {
-        String email = request.getEmail().trim().toLowerCase();
-        if (authUserRepository.existsByEmailIgnoreCase(email)) {
-            throw new DuplicateUserException("Email already in use");
+        String name = request.getName().trim();
+        if (authUserRepository.existsByNameIgnoreCase(name)) {
+            throw new DuplicateUserException("Username already in use");
         }
 
         AuthUser user = new AuthUser();
         user.setName(request.getName());
         user.setEmail(email);
-        // Encode password with BCrypt
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(request.getPassword());
+        log.info("Saving new user to database: name={}", name);
         return authUserRepository.save(user);
     }
 
     public LoginResponse login(LoginRequest request) {
         AuthUser user = authUserRepository
-                .findByEmailIgnoreCase(request.getEmail().trim())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+                .findByNameIgnoreCase(request.getName().trim())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
 
         // Verify password with BCrypt
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
