@@ -31,4 +31,8 @@ export class AccountSetupService {
   updateAccount(userName: string, payload: any): Observable<any> {
     return this.http.put(`${this.base}/user/${userName}`, payload);
   }
+
+  getAccountByNumber(accountNumber: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/v1/accounts/number/${accountNumber}`);
+  }
 }

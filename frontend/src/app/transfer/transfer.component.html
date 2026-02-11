@@ -10,14 +10,17 @@
     <div class="account">
       <div>
         <p class="account-label">Account holder</p>
-        <p class="account-name">Aarav Sharma</p>
+        <p class="account-name">{{ userName }}</p>
       </div>
-      <button class="logout ghost" type="button" mat-stroked-button>Log out</button>
+      <button class="logout ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
     </div>
     <div class="topbar-actions">
-      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
-      <button class="ghost" type="button" mat-stroked-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
-      <button class="ghost" type="button" mat-flat-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/dashboard" routerLinkActive="active"
+        [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+      <button class="ghost" type="button" mat-stroked-button routerLink="/history" routerLinkActive="active"
+        [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+      <button class="ghost" type="button" mat-flat-button routerLink="/transfer" routerLinkActive="active"
+        [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
       <button class="ghost" type="button" mat-stroked-button (click)="onLogout()">Log out</button>
     </div>
   </header>
@@ -52,27 +55,31 @@
           <!-- From Account Section -->
           <div class="from-account">
             <div class="from-account-header">
-              <div class="account-avatar">AS</div>
+              <div class="account-avatar">{{ getInitials() }}</div>
               <div class="from-account-info">
-                <p class="from-label">From: <span class="from-name">Aarav Sharma</span></p>
+                <p class="from-label">From: <span class="from-name">{{ userName }}</span></p>
               </div>
             </div>
-            <p class="from-account-number">Account number: 1234567890</p>
+            <p class="from-account-number">Account number: {{ myAccountNumber }}</p>
           </div>
-          
+
           <p>To Account Number</p>
           <!-- Input for Account Number -->
-          <input type="text" id="account-number" placeholder="Enter account number" (input)="onAccountNumberInput($event)" />
-          <p class="account-hint" *ngIf="accountNumber && accountNumber.length < 12" style="color: #f57c00; font-size: 0.8rem; margin-top: -0.5rem;">12 digits required ({{ accountNumber.length }}/12)</p>
-          
+          <input type="text" id="account-number" placeholder="Enter account number"
+            (input)="onAccountNumberInput($event)" />
+          <p class="account-hint" *ngIf="accountNumber && accountNumber.length < 12"
+            style="color: #f57c00; font-size: 0.8rem; margin-top: -0.5rem;">12 digits required ({{ accountNumber.length
+            }}/12)</p>
+
           <p>&#8377;Amount</p>
           <!-- Input for Amount -->
           <input type="number" id="amount" placeholder="Enter amount" (input)="onAmountInput($event)" />
-          
+
           <p>Description <span style="font-size: 0.85rem; color: #999;">(optional)</span></p>
           <!-- Input for Description -->
-          <input type="text" id="description" placeholder="Enter transaction description" (input)="onDescriptionInput($event)" />
-          
+          <input type="text" id="description" placeholder="Enter transaction description"
+            (input)="onDescriptionInput($event)" />
+
           <button class="send-button" type="button" mat-flat-button (click)="onSendMoney()">Send Money</button>
         </div>
       </div>
@@ -88,7 +95,8 @@
 
           <div *ngIf="!isSuccess">
             <div class="pin-input-container">
-              <input [type]="pinVisible ? 'text' : 'password'" maxlength="4" placeholder="Enter 4-digit PIN" (input)="onPinInput($event)" />
+              <input [type]="pinVisible ? 'text' : 'password'" maxlength="4" placeholder="Enter 4-digit PIN"
+                (input)="onPinInput($event)" />
               <button type="button" class="pin-toggle" (click)="togglePinVisibility()">
                 {{ pinVisible ? 'Hide' : 'Show' }}
               </button>
@@ -110,9 +118,12 @@
   </main>
 
   <nav class="bottom-nav">
-    <button type="button" class="nav-item" mat-button routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
-    <button type="button" class="nav-item" mat-button routerLink="/history" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
-    <button type="button" class="nav-item" mat-button routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
+    <button type="button" class="nav-item" mat-button routerLink="/dashboard" routerLinkActive="active"
+      [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+    <button type="button" class="nav-item" mat-button routerLink="/history" routerLinkActive="active"
+      [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+    <button type="button" class="nav-item" mat-button routerLink="/transfer" routerLinkActive="active"
+      [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
     <button type="button" class="nav-item logout" mat-button (click)="onLogout()">Log out</button>
   </nav>
 </section>

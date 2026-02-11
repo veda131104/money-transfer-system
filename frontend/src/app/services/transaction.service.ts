@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -5,10 +6,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export interface Transaction {
   id: string;
   accountNumber: string;
+  fromAccountNumber?: string;  // Account that sent the money
+  toAccountNumber?: string;    // Account that received the money
   amount: string;
   date: Date;
-  type: 'debit' | 'credit';
-  status: 'completed' | 'pending' | 'failed';
+  type: 'debit' | 'credit' | 'transfer';
+  status: 'completed' | 'pending' | 'failed' | 'SUCCESS' | 'FAILED';
   referenceId: string;
   description?: string;
 }
@@ -17,11 +20,19 @@ export interface Transaction {
   providedIn: 'root'
 })
 export class TransactionService {
+  private readonly baseUrl = 'http://localhost:8080/api/v1/transfers';
   private transactionsSubject = new BehaviorSubject<Transaction[]>([]);
   public transactions$ = this.transactionsSubject.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.loadTransactionsFromStorage();
+  }
+
+  executeTransfer(payload: { fromAccountNumber: string, toAccountNumber: string, amount: number }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/by-account`, payload);
   }
 
   private isBrowser(): boolean {
@@ -45,6 +56,37 @@ export class TransactionService {
         console.error('Error loading transactions from storage', e);
       }
     }
+  }
+
+  private mapDtoToTransaction(dto: any): Transaction {
+    return {
+      id: dto.id.toString(),
+      accountNumber: dto.fromAccountNumber || dto.toAccountNumber || '',
+      fromAccountNumber: dto.fromAccountNumber,
+      toAccountNumber: dto.toAccountNumber,
+      amount: dto.amount.toString(),
+      date: new Date(dto.transactionDate),
+      type: dto.type.toLowerCase() as 'debit' | 'credit' | 'transfer',
+      status: dto.status as 'SUCCESS' | 'FAILED' | 'completed' | 'pending' | 'failed',
+      referenceId: dto.idempotencyKey || `TXN${dto.id}`,
+      description: dto.description
+    };
+  }
+
+  getAccountHistory(accountId: number): Observable<Transaction[]> {
+    return new Observable<Transaction[]>(observer => {
+      this.http.get<any>(`${this.baseUrl}/account/${accountId}`).subscribe({
+        next: (response) => {
+          const transactions = (response.transactions || []).map((dto: any) => this.mapDtoToTransaction(dto));
+          this.transactionsSubject.next(transactions);
+          observer.next(transactions);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+        }
+      });
+    });
   }
 
   private saveTransactionsToStorage(): void {
