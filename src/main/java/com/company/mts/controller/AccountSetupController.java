@@ -28,13 +28,17 @@ public class AccountSetupController {
 
     @PostMapping
     public ResponseEntity<AccountSetupResponse> create(@RequestBody AccountSetupRequest request) {
-        String generatedUpiId = generateUpiId(request.getContact(), request.getBankName());
+        String generatedUpiId = generateUpiId(request.getEmail(), request.getBankName());
 
         BankDetails details = BankDetails.builder()
                 .accountNumber(request.getAccountNumber())
                 .bankName(request.getBankName())
                 .ifscCode(request.getIfscCode())
-                .contact(request.getContact())
+                .branchName(request.getBranchName())
+                .address(request.getAddress())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .userName(request.getUserName())
                 .creditCardNumber(request.getCreditCardNumber())
                 .cvv(request.getCvv())
                 .upiId(generatedUpiId)
@@ -80,6 +84,31 @@ public class AccountSetupController {
         BankDetails updated = service.setupUpi(id, upiId);
         return ResponseEntity
                 .ok(new AccountSetupResponse(updated.getId(), updated.getAccountNumber(), updated.getUpiId()));
+    }
+
+    @GetMapping("/user/{userName}")
+    public ResponseEntity<BankDetails> getByUserName(@PathVariable String userName) {
+        BankDetails details = service.findByUserName(userName)
+                .orElseThrow(() -> new IllegalArgumentException("Bank details not found for user: " + userName));
+        return ResponseEntity.ok(details);
+    }
+
+    @PutMapping("/user/{userName}")
+    public ResponseEntity<BankDetails> update(@PathVariable String userName, @RequestBody AccountSetupRequest request) {
+        BankDetails existing = service.findByUserName(userName)
+                .orElseThrow(() -> new IllegalArgumentException("Bank details not found for user: " + userName));
+
+        existing.setBankName(request.getBankName());
+        existing.setIfscCode(request.getIfscCode());
+        existing.setBranchName(request.getBranchName());
+        existing.setAddress(request.getAddress());
+        existing.setEmail(request.getEmail());
+        existing.setPhoneNumber(request.getPhoneNumber());
+        existing.setCreditCardNumber(request.getCreditCardNumber());
+        existing.setCvv(request.getCvv());
+
+        BankDetails saved = service.save(existing);
+        return ResponseEntity.ok(saved);
     }
 
     @PostMapping("/send-otp")

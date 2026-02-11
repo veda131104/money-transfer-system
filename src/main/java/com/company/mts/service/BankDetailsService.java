@@ -27,8 +27,13 @@ public class BankDetailsService {
         return repository.findById(id);
     }
 
+    public Optional<BankDetails> findByUserName(String userName) {
+        return repository.findByUserName(userName);
+    }
+
     public BankDetails setupUpi(Long id, String upiId) {
-        BankDetails details = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Bank details not found"));
+        BankDetails details = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Bank details not found"));
         details.setUpiId(upiId);
         return repository.save(details);
     }

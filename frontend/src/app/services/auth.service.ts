@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, tap } from 'rxjs';
 
 export interface SignupPayload {
@@ -23,7 +24,14 @@ export class AuthService {
   private readonly baseUrl = 'http://localhost:8080/api/v1/auth';
   private readonly sessionKey = 'auth_session';
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(
+    private readonly http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
   signup(payload: SignupPayload): Observable<AuthResponse> {
     return this.http
@@ -38,15 +46,28 @@ export class AuthService {
   }
 
   clearSession(): void {
-    if (typeof localStorage === 'undefined') {
+    if (!this.isBrowser()) {
       return;
     }
 
     localStorage.removeItem(this.sessionKey);
   }
 
+  getCurrentUser(): AuthResponse | null {
+    if (!this.isBrowser()) {
+      return null;
+    }
+
+    try {
+      const session = localStorage.getItem(this.sessionKey);
+      return session ? JSON.parse(session) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   private saveSession(session: AuthResponse): void {
-    if (typeof localStorage === 'undefined') {
+    if (!this.isBrowser()) {
       return;
     }
 

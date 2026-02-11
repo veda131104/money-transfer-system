@@ -4,7 +4,11 @@ public class AccountSetupRequest {
     private String accountNumber;
     private String bankName;
     private String ifscCode;
-    private String contact; // phone or email
+    private String branchName;
+    private String address;
+    private String email;
+    private String phoneNumber;
+    private String userName;
     private String creditCardNumber;
     private String cvv;
     private String upiId;
@@ -36,12 +40,44 @@ public class AccountSetupRequest {
         this.ifscCode = ifscCode;
     }
 
-    public String getContact() {
-        return contact;
+    public String getBranchName() {
+        return branchName;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getCreditCardNumber() {

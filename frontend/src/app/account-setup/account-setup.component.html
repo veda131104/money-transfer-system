@@ -18,12 +18,27 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
-      <mat-label>Phone / Email (for OTP)</mat-label>
-      <input matInput formControlName="contact" />
+      <mat-label>Branch Name</mat-label>
+      <input matInput formControlName="branchName" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full">
+      <mat-label>Address</mat-label>
+      <textarea matInput formControlName="address" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full">
+      <mat-label>Email Address</mat-label>
+      <input matInput formControlName="email" placeholder="example@mail.com" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full">
+      <mat-label>Phone Number</mat-label>
+      <input matInput formControlName="phoneNumber" placeholder="+91 ..." />
     </mat-form-field>
 
     <div class="otp-row">
-      <button mat-raised-button type="button" (click)="sendOtp()">Send OTP</button>
+      <button mat-raised-button type="button" (click)="sendOtp()">Send Email OTP</button>
       <mat-form-field appearance="fill" class="otp-field">
         <input matInput placeholder="Enter OTP" formControlName="otp" />
       </mat-form-field>

@@ -11,11 +11,8 @@ public class AuthUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @Column(nullable = false, unique = true)
-    private String email;
+    private String name;
 
     @Column(nullable = false)
     private String password;
@@ -27,9 +24,6 @@ public class AuthUser {
     public void prePersist() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
-        }
-        if (email != null) {
-            email = email.trim().toLowerCase();
         }
         if (name != null) {
             name = name.trim();
@@ -52,20 +46,23 @@ public class AuthUser {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Column(unique = true)
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public LocalDateTime getCreatedAt() {

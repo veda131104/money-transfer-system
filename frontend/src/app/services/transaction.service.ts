@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface Transaction {
@@ -19,16 +20,19 @@ export class TransactionService {
   private transactionsSubject = new BehaviorSubject<Transaction[]>([]);
   public transactions$ = this.transactionsSubject.asObservable();
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.loadTransactionsFromStorage();
   }
 
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
   private loadTransactionsFromStorage(): void {
-    // Check if localStorage is available (browser environment)
-    if (typeof localStorage === 'undefined') {
+    if (!this.isBrowser()) {
       return;
     }
-    
+
     const stored = localStorage.getItem('transactions');
     if (stored) {
       try {
@@ -44,11 +48,10 @@ export class TransactionService {
   }
 
   private saveTransactionsToStorage(): void {
-    // Check if localStorage is available (browser environment)
-    if (typeof localStorage === 'undefined') {
+    if (!this.isBrowser()) {
       return;
     }
-    
+
     localStorage.setItem('transactions', JSON.stringify(this.transactionsSubject.value));
   }
 
