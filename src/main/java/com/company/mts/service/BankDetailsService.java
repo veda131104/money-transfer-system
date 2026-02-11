@@ -37,4 +37,11 @@ public class BankDetailsService {
         details.setUpiId(upiId);
         return repository.save(details);
     }
+
+    public BankDetails updatePin(String userName, String pin) {
+        BankDetails details = repository.findByUserName(userName)
+                .orElseThrow(() -> new IllegalArgumentException("Bank details not found for user: " + userName));
+        details.setPin(pin);
+        return repository.save(details);
+    }
 }

@@ -128,6 +128,16 @@ public class AccountSetupController {
         return ResponseEntity.ok(saved);
     }
 
+    @PostMapping("/user/{userName}/pin")
+    public ResponseEntity<BankDetails> setPin(@PathVariable String userName, @RequestBody Map<String, String> body) {
+        String pin = body.get("pin");
+        if (pin == null || pin.length() != 4) {
+            throw new IllegalArgumentException("PIN must be 4 digits");
+        }
+        BankDetails updated = service.updatePin(userName, pin);
+        return ResponseEntity.ok(updated);
+    }
+
     @PostMapping("/send-otp")
     public ResponseEntity<Map<String, Object>> sendOtp(@RequestBody Map<String, String> body) {
         String contact = body.get("contact");

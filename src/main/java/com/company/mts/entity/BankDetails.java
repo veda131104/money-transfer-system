@@ -39,6 +39,9 @@ public class BankDetails {
     @Column(unique = true)
     private String upiId;
 
+    @Column(length = 4)
+    private String pin;
+
     private LocalDateTime createdAt;
     private LocalDateTime lastUpdated;
 
@@ -47,7 +50,7 @@ public class BankDetails {
 
     public BankDetails(Long id, String accountNumber, String bankName, String ifscCode, String branchName,
             String address, String email,
-            String phoneNumber, String userName, String creditCardNumber, String cvv, String upiId,
+            String phoneNumber, String userName, String creditCardNumber, String cvv, String upiId, String pin,
             LocalDateTime createdAt, LocalDateTime lastUpdated) {
         this.id = id;
         this.accountNumber = accountNumber;
@@ -61,6 +64,7 @@ public class BankDetails {
         this.creditCardNumber = creditCardNumber;
         this.cvv = cvv;
         this.upiId = upiId;
+        this.pin = pin;
         this.createdAt = createdAt;
         this.lastUpdated = lastUpdated;
     }
@@ -82,6 +86,7 @@ public class BankDetails {
         private String creditCardNumber;
         private String cvv;
         private String upiId;
+        private String pin;
         private LocalDateTime createdAt;
         private LocalDateTime lastUpdated;
 
@@ -145,6 +150,11 @@ public class BankDetails {
             return this;
         }
 
+        public Builder pin(String pin) {
+            this.pin = pin;
+            return this;
+        }
+
         public Builder createdAt(LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -158,7 +168,7 @@ public class BankDetails {
         public BankDetails build() {
             return new BankDetails(id, accountNumber, bankName, ifscCode, branchName, address, email, phoneNumber,
                     userName,
-                    creditCardNumber, cvv, upiId, createdAt, lastUpdated);
+                    creditCardNumber, cvv, upiId, pin, createdAt, lastUpdated);
         }
     }
 
@@ -269,6 +279,14 @@ public class BankDetails {
 
     public void setUpiId(String upiId) {
         this.upiId = upiId;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
     public LocalDateTime getCreatedAt() {
