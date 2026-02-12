@@ -27,19 +27,19 @@
 
   <main class="dashboard-grid">
     <mat-card class="card highlights">
-      <h1>Today at a glance</h1>
+      <h1>Welcome back, {{ userName }}</h1>
       <p>Live status of your payout corridors and risk posture.</p>
       <div class="balance">
         <p class="balance-label">Current balance</p>
-        <p class="balance-value">&#8377;2,48,930.50</p>
+        <p class="balance-value">{{ balance | currency:'INR':'symbol':'1.2-2' }}</p>
       </div>
       <div class="metrics">
         <div class="metric">
-          <p class="metric-value">&#8377;4.2M</p>
+          <p class="metric-value">{{ processedToday | currency:'INR':'symbol':'1.0-0' }}</p>
           <p class="metric-label">Processed today</p>
         </div>
         <div class="metric">
-          <p class="metric-value">312</p>
+          <p class="metric-value">{{ activeTransfers }}</p>
           <p class="metric-label">Active transfers</p>
         </div>
         <div class="metric">
@@ -49,43 +49,68 @@
       </div>
     </mat-card>
 
-    <mat-card class="card flow">
-      <div class="card-header">
-        <h2>Transfer flow</h2>
-        <span class="badge">Live</span>
-      </div>
-      <div class="flow-bars">
-        <div>
-          <p>Approved</p>
-          <div class="bar"><span style="width: 76%"></span></div>
+    <mat-card class="card magic-card">
+      <div class="card-glass">
+        <div class="card-chip"></div>
+        <div class="card-number">{{ cardDetails.number }}</div>
+        <div class="card-info">
+          <div>
+            <p class="card-label">Card Holder</p>
+            <p class="card-holder">{{ cardDetails.holder }}</p>
+          </div>
+          <div>
+            <p class="card-label">Expires</p>
+            <p class="card-expiry">{{ cardDetails.expiry }}</p>
+          </div>
         </div>
-        <div>
-          <p>In review</p>
-          <div class="bar"><span style="width: 42%"></span></div>
-        </div>
-        <div>
-          <p>Flagged</p>
-          <div class="bar"><span style="width: 18%"></span></div>
-        </div>
+        <div class="card-brand">{{ cardDetails.type }}</div>
       </div>
     </mat-card>
 
-    <mat-card class="card insights">
-      <h2>Compliance insights</h2>
-      <p>Automated checks across 14 sanction lists in the last hour.</p>
-      <div class="insight-grid">
-        <div>
-          <p class="insight-value">98.9%</p>
-          <p class="insight-label">Auto-approved</p>
+    <mat-card class="card activity">
+      <div class="card-header">
+        <h2>Recent Activity</h2>
+        <button class="link" routerLink="/history">View all</button>
+      </div>
+      <div class="activity-list">
+        @for (txn of recentTransactions; track txn.id) {
+        <div class="activity-item">
+          <div class="activity-icon" [ngClass]="txn.type">
+            {{ txn.type === 'credit' ? '↓' : '↑' }}
+          </div>
+          <div class="activity-details">
+            <p class="activity-title">{{ txn.description || 'Money Transfer' }}</p>
+            <p class="activity-meta">{{ txn.date | date:'MMM d, h:mm a' }} • {{ txn.referenceId }}</p>
+          </div>
+          <div class="activity-amount" [ngClass]="txn.type">
+            {{ txn.type === 'credit' ? '+' : '-' }}{{ txn.amount | currency:'INR':'symbol':'1.2-2' }}
+          </div>
         </div>
-        <div>
-          <p class="insight-value">4</p>
-          <p class="insight-label">Manual reviews</p>
+        } @empty {
+        <p class="no-activity">No recent transactions found.</p>
+        }
+      </div>
+    </mat-card>
+
+    <mat-card class="card activity compliance">
+      <div class="card-header">
+        <h2>Recent Payments</h2>
+        <button class="link" routerLink="/history">View all</button>
+      </div>
+      <div class="activity-list small">
+        @for (txn of recentTransactions; track txn.id) {
+        <div class="activity-item">
+          <div class="activity-details">
+            <p class="activity-title">{{ txn.toAccountHolderName || 'Self' }}</p>
+            <p class="activity-meta">{{ txn.amount | currency:'INR':'symbol':'1.2-2' }} • {{ txn.status }}</p>
+          </div>
+          <div class="activity-amount" [ngClass]="txn.type">
+            {{ txn.type === 'credit' ? '+' : '-' }}{{ txn.amount | currency:'INR':'symbol':'1.2-2' }}
+          </div>
         </div>
-        <div>
-          <p class="insight-value">2</p>
-          <p class="insight-label">Escalations</p>
-        </div>
+        } @empty {
+        <p class="no-activity">No recent payments found.</p>
+        }
       </div>
     </mat-card>
   </main>

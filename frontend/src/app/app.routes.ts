@@ -18,4 +18,5 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'account-setup', component: AccountSetupComponent },
   { path: 'pin-confirm', component: PinConfirmComponent },
+  { path: 'reset-password', loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent) },
 ];

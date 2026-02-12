@@ -54,7 +54,7 @@ export class TransferComponent {
         next: (details: any) => {
           if (details) {
             this.myAccountNumber = details.accountNumber;
-            this.userPin = details.pin || '1234'; // Fallback to 1234 if not set
+            this.userPin = details.pin || ''; // Remove fallback
             this.cdr.detectChanges();
           }
         },
@@ -118,6 +118,11 @@ export class TransferComponent {
     const amountValue = parseFloat(this.amount);
     if (amountValue <= 0) {
       alert('Amount must be greater than zero.');
+      return;
+    }
+
+    if (!this.userPin) {
+      alert('Transaction Security: No PIN detected. Please go to your Profile and set a 4-digit PIN before making transfers.');
       return;
     }
 
@@ -246,7 +251,7 @@ export class TransferComponent {
   }
 
   onLogout(): void {
-    // Clear session and redirect to login
-    this.router.navigate(['/login']);
+    this.authService.clearSession();
+    this.router.navigate(['/']);
   }
 }

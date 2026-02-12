@@ -5,36 +5,57 @@
     <mat-form-field appearance="fill" class="full">
       <mat-label>Account Number</mat-label>
       <input matInput formControlName="accountNumber" />
+      @if (form.get('accountNumber')?.hasError('required') && form.get('accountNumber')?.touched) {
+      <mat-error>Account Number is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>Bank Name</mat-label>
       <input matInput formControlName="bankName" />
+      @if (form.get('bankName')?.hasError('required') && form.get('bankName')?.touched) {
+      <mat-error>Bank Name is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>IFSC Code</mat-label>
       <input matInput formControlName="ifscCode" />
+      @if (form.get('ifscCode')?.hasError('required') && form.get('ifscCode')?.touched) {
+      <mat-error>IFSC Code is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>Branch Name</mat-label>
       <input matInput formControlName="branchName" />
+      @if (form.get('branchName')?.hasError('required') && form.get('branchName')?.touched) {
+      <mat-error>Branch Name is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>Address</mat-label>
       <textarea matInput formControlName="address" rows="3"></textarea>
+      @if (form.get('address')?.hasError('required') && form.get('address')?.touched) {
+      <mat-error>Address is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>Email Address</mat-label>
       <input matInput formControlName="email" placeholder="example@mail.com" />
+      @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+      <mat-error>Email is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>Phone Number</mat-label>
       <input matInput formControlName="phoneNumber" placeholder="+91 ..." />
+      @if (form.get('phoneNumber')?.hasError('required') && form.get('phoneNumber')?.touched) {
+      <mat-error>Phone Number is required</mat-error>
+      }
     </mat-form-field>
 
     <div class="otp-row">
@@ -48,11 +69,25 @@
     <mat-form-field appearance="fill" class="full">
       <mat-label>Credit Card Number</mat-label>
       <input matInput formControlName="creditCardNumber" />
+      @if (form.get('creditCardNumber')?.hasError('required') && form.get('creditCardNumber')?.touched) {
+      <mat-error>Credit Card Number is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full">
       <mat-label>CVV</mat-label>
-      <input matInput formControlName="cvv" />
+      <input matInput formControlName="cvv" maxlength="3" />
+      @if (form.get('cvv')?.hasError('required') && form.get('cvv')?.touched) {
+      <mat-error>CVV is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full">
+      <mat-label>Expiry Date (MM/YY)</mat-label>
+      <input matInput formControlName="expiryDate" placeholder="MM/YY" maxlength="5" />
+      @if (form.get('expiryDate')?.hasError('required') && form.get('expiryDate')?.touched) {
+      <mat-error>Expiry Date is required</mat-error>
+      }
     </mat-form-field>
 
     <div class="actions">

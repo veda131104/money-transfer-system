@@ -42,10 +42,10 @@
 
           <div class="form-row">
             <label class="checkbox">
-              <input type="checkbox" checked />
+              <input type="checkbox" formControlName="rememberMe" />
               <span>Keep me signed in</span>
             </label>
-            <button class="link" type="button" mat-button>Forgot password?</button>
+            <button class="link" type="button" mat-button (click)="openForgotModal()">Forgot password?</button>
           </div>
 
           <button class="primary" type="submit" mat-flat-button [disabled]="loading">
@@ -70,6 +70,29 @@
         </p>
       </mat-card>
     </div>
-
   </div>
+
+  @if (isForgotModalOpen) {
+  <div class="modal-overlay">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h2>Password Recovery</h2>
+        <p>Enter your username and we'll send a recovery email to your registered address.</p>
+      </header>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Username</mat-label>
+        <input matInput type="text" placeholder="Your username" [(ngModel)]="forgotUsernameValue" [disabled]="isSending"
+          (keyup.enter)="onForgotPassword()" />
+      </mat-form-field>
+
+      <div class="modal-actions">
+        <button class="primary" (click)="onForgotPassword()" [disabled]="isSending">
+          {{ isSending ? 'Sending...' : 'Send Recovery Email' }}
+        </button>
+        <button class="ghost" (click)="closeForgotModal()" [disabled]="isSending">Cancel</button>
+      </div>
+    </div>
+  </div>
+  }
 </section>

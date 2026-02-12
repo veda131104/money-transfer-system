@@ -25,6 +25,7 @@ import { AuthService } from '../services/auth.service';
 export class AccountSetupComponent {
   form!: FormGroup;
   lastSentOtp = '';
+  isEmailVerified = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -40,9 +41,15 @@ export class AccountSetupComponent {
       ifscCode: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required]],
-      creditCardNumber: [''],
-      cvv: [''],
+      creditCardNumber: ['', [Validators.required]],
+      cvv: ['', [Validators.required]],
+      expiryDate: ['', [Validators.required]],
       otp: ['']
+    });
+
+    // Reset verification status if email changes
+    this.form.get('email')?.valueChanges.subscribe(() => {
+      this.isEmailVerified = false;
     });
   }
 
@@ -67,16 +74,32 @@ export class AccountSetupComponent {
     }
     this.svc.verifyOtp({ contact, otp }).subscribe(resp => {
       if (resp.verified) {
-        alert('Email verified');
+        this.isEmailVerified = true;
+        alert('Email verified successfully!');
       } else {
-        alert('Invalid OTP');
+        this.isEmailVerified = false;
+        alert('Invalid OTP. Please try again.');
       }
     });
   }
 
   submit(): void {
     if (this.form.invalid) {
+      alert('Please fill in all mandatory fields correctly before proceeding.');
       this.form.markAllAsTouched();
+      return;
+    }
+
+    const accNo = this.form.get('accountNumber')?.value || '';
+    if (accNo.length !== 12) {
+      alert('Validation Error: Account Number must be exactly 12 digits.');
+      this.form.get('accountNumber')?.markAsTouched();
+      return;
+    }
+
+    if (!this.isEmailVerified) {
+      alert('Security Requirement: Please verify your email address using the OTP sent to your inbox before completing setup.');
+      this.form.get('otp')?.markAsTouched();
       return;
     }
 
