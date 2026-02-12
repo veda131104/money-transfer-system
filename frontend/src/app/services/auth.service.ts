@@ -5,16 +5,19 @@ import { Observable, tap } from 'rxjs';
 
 export interface SignupPayload {
   name: string;
+  email: string;
   password: string;
 }
 
 export interface LoginPayload {
   name: string;
   password: string;
+  rememberMe?: boolean;
 }
 
 export interface AuthResponse {
   name: string;
+  rememberToken?: string;
 }
 
 @Injectable({
@@ -43,6 +46,26 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${this.baseUrl}/login`, payload)
       .pipe(tap(response => this.saveSession(response)));
+  }
+
+  forgotPassword(username: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/forgot-password`, { name: username });
+  }
+
+  loginWithToken(token: string): Observable<AuthResponse> {
+    return this.http
+      .get<AuthResponse>(`${this.baseUrl}/verify-token?token=${token}`)
+      .pipe(tap(response => this.saveSession(response)));
+  }
+
+  resetPassword(payload: { token: string; newPassword: String }): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/reset-password`, payload)
+      .pipe(tap(response => this.saveSession(response)));
+  }
+
+  getCredentialsByToken(token: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/remember-me?token=${token}`);
   }
 
   clearSession(): void {

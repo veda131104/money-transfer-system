@@ -184,6 +184,8 @@
 .metric-value {
   font-size: 1.4rem;
   margin: 0 0 0.4rem;
+  font-weight: 700;
+  color: #1d3b4f;
 }
 
 .metric-label {
@@ -192,53 +194,89 @@
   font-size: 0.85rem;
 }
 
-.flow {
+.magic-card {
   grid-column: span 5;
-}
-
-.card-header {
+  background: linear-gradient(135deg, #1d3b4f, #215a66);
+  padding: 0;
+  overflow: hidden;
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
+  min-height: 240px;
+}
+
+.card-glass {
+  width: 90%;
+  height: 85%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.card-header h2 {
+.card-chip {
+  width: 45px;
+  height: 35px;
+  background: linear-gradient(135deg, #e5c185, #c0a060);
+  border-radius: 6px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 60%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+}
+
+.card-number {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.12em;
+  margin: 1rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+  margin: 0 0 0.2rem;
+}
+
+.card-holder,
+.card-expiry {
+  font-size: 1rem;
+  font-weight: 600;
   margin: 0;
+}
+
+.card-brand {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-weight: 700;
+  font-style: italic;
   font-size: 1.2rem;
-}
-
-.badge {
-  background: #e6f2ef;
-  color: #1c5c55;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-}
-
-.flow-bars {
-  display: grid;
-  gap: 1rem;
-}
-
-.flow-bars p {
-  margin: 0 0 0.4rem;
-  color: #4b5b63;
-  font-size: 0.85rem;
-}
-
-.bar {
-  height: 8px;
-  background: #edf1f3;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.bar span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(120deg, #1d3b4f, #215a66);
-  border-radius: inherit;
+  opacity: 0.9;
 }
 
 .activity {
@@ -247,61 +285,86 @@
 
 .activity-list {
   display: grid;
-  gap: 0.9rem;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
 .activity-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem 1rem;
-  border-radius: 16px;
-  background: #f7f4f0;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: #fdfdfd;
+  border: 1px solid rgba(33, 90, 102, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateX(4px);
+    border-color: rgba(33, 90, 102, 0.15);
+    background: #f7f9fa;
+  }
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+
+  &.credit {
+    background: #e6f7ef;
+    color: #1a8754;
+  }
+
+  &.transfer,
+  &.debit {
+    background: #fef1f1;
+    color: #dc3545;
+  }
+}
+
+.activity-details {
+  flex: 1;
 }
 
 .activity-title {
-  margin: 0 0 0.3rem;
-  font-weight: 700;
+  margin: 0 0 0.15rem;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .activity-meta {
   margin: 0;
-  color: #6a7881;
-  font-size: 0.8rem;
-}
-
-.status {
   font-size: 0.75rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+  color: #7a8891;
 }
 
-.status.success {
-  background: #e4f3ec;
-  color: #1f6b50;
-}
-
-.status.pending {
-  background: #fff2d8;
-  color: #8a5a11;
-}
-
-.status.risk {
-  background: #fde7e7;
-  color: #8f2d2d;
-}
-
-.link {
-  border: none;
-  background: none;
-  color: #1d3b4f;
-  cursor: pointer;
-  font-size: 0.85rem;
+.activity-amount {
   font-weight: 700;
+  font-size: 1rem;
+
+  &.credit {
+    color: #1a8754;
+  }
+
+  &.transfer,
+  &.debit {
+    color: #dc3545;
+  }
 }
 
-.insights {
+.no-activity {
+  text-align: center;
+  color: #7a8891;
+  padding: 2rem 0;
+  font-style: italic;
+}
+
+.compliance {
   grid-column: span 5;
 }
 
@@ -369,6 +432,7 @@
 }
 
 @media (max-width: 1100px) {
+
   .highlights,
   .flow,
   .activity,
@@ -474,4 +538,3 @@
   color: #808080;
   font-weight: 400;
 }
-

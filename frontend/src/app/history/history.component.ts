@@ -361,6 +361,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   onLogout(): void {
-    this.router.navigate(['/login']);
+    this.authService.clearSession();
+    this.router.navigate(['/']);
   }
 }

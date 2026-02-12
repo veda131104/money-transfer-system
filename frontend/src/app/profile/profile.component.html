@@ -181,6 +181,15 @@
       </mat-card>
     </form>
   </main>
+  <nav class="bottom-nav">
+    <button type="button" class="nav-item" mat-button routerLink="/dashboard" routerLinkActive="active"
+      [routerLinkActiveOptions]="routerLinkActiveOptions">Dashboard</button>
+    <button type="button" class="nav-item" mat-button routerLink="/history" routerLinkActive="active"
+      [routerLinkActiveOptions]="routerLinkActiveOptions">History</button>
+    <button type="button" class="nav-item" mat-button routerLink="/transfer" routerLinkActive="active"
+      [routerLinkActiveOptions]="routerLinkActiveOptions">New Transfer</button>
+    <button type="button" class="nav-item logout" mat-button (click)="onLogout()">Log out</button>
+  </nav>
 </section>
 
 <footer class="app-footer">

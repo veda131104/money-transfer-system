@@ -34,6 +34,17 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="field">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" placeholder="you@example.com" autocomplete="email" formControlName="email" />
+            @if (form.get('email')?.hasError('required')) {
+            <mat-error>Email is required</mat-error>
+            }
+            @if (form.get('email')?.hasError('email')) {
+            <mat-error>Invalid email format</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="field">
             <mat-label>Create new password</mat-label>
             <input matInput type="password" placeholder="At least 8 characters" autocomplete="new-password"
               formControlName="password" />

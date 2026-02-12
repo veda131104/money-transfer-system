@@ -39,6 +39,7 @@ export class SignupComponent {
     this.form = this.fb.nonNullable.group(
       {
         username: ['', [Validators.required, Validators.minLength(3)]],
+        email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]]
       },
@@ -53,8 +54,8 @@ export class SignupComponent {
       return;
     }
 
-    const { username, password } = this.form.getRawValue();
-    this.authService.signup({ name: username, password }).subscribe({
+    const { username, email, password } = this.form.getRawValue();
+    this.authService.signup({ name: username, email, password }).subscribe({
       next: () => {
         alert('Signup successful!');
         this.router.navigate(['/dashboard']);

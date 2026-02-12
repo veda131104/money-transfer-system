@@ -87,7 +87,15 @@ export class ProfileComponent implements OnInit {
     this.accountSetupService.getAccountByUser(userName).subscribe({
       next: (data) => {
         this.isNewUser = false;
-        this.profileData = { ...this.profileData, ...data };
+        this.profileData = {
+          ...this.profileData,
+          ...data,
+          joinDate: data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'N/A'
+        };
         this.profileForm.patchValue(data);
       },
       error: () => {
@@ -118,7 +126,15 @@ export class ProfileComponent implements OnInit {
 
     this.accountSetupService.updateAccount(user.name, this.profileForm.value).subscribe({
       next: (data) => {
-        this.profileData = { ...this.profileData, ...data };
+        this.profileData = {
+          ...this.profileData,
+          ...data,
+          joinDate: data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'N/A'
+        };
         this.isEditing = false;
         alert('Profile updated successfully!');
       },
