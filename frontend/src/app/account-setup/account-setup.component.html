@@ -60,6 +60,11 @@
 
     <div class="otp-row">
       <button mat-raised-button type="button" (click)="sendOtp()">Send Email OTP</button>
+      @if (otpSentMessage) {
+      <div class="otp-message" style="color: green; font-weight: bold; margin: 10px 0;">
+        {{ otpSentMessage }}
+      </div>
+      }
       <mat-form-field appearance="fill" class="otp-field">
         <input matInput placeholder="Enter OTP" formControlName="otp" />
       </mat-form-field>

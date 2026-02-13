@@ -5,26 +5,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
-    private String email;
+    @NotBlank(message = "Name is required")
+    private String name;
 
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
     private boolean rememberMe;
 
-    private boolean rememberMe;
     public String getName() {
         return name;
     }
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {

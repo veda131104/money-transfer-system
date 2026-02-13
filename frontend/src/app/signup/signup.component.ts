@@ -40,6 +40,7 @@ export class SignupComponent {
     this.form = this.fb.nonNullable.group(
       {
         username: ['', [Validators.required, Validators.minLength(3)]],
+        email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]]
       },
@@ -54,22 +55,23 @@ export class SignupComponent {
       return;
     }
 
+    this.loading = true;
     const { username, email, password } = this.form.getRawValue();
     this.authService.signup({ name: username, email, password }).subscribe({
       next: () => {
         this.loading = false;
-        alert('Signup successful! Please login.');
-        this.router.navigate(['/login']);
+        alert('Signup successful!');
+        this.router.navigate(['/dashboard']);
       },
       error: error => {
         this.loading = false;
         if (error?.status === 409) {
-          alert('Email is already registered.');
-          this.form.get('email')?.setErrors({ emailTaken: true });
+          alert('Username is already taken.');
+          this.form.reset();
           return;
         }
         alert('Signup failed. Please try again.');
-        this.form.setErrors({ signupFailed: true });
+        this.form.reset();
       }
     });
   }

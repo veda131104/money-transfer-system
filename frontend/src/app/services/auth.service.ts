@@ -10,14 +10,14 @@ export interface SignupPayload {
 }
 
 export interface LoginPayload {
-  email: string;
+  name: string;
   password: string;
   rememberMe?: boolean;
 }
 
 export interface AuthResponse {
   name: string;
-  rememberToken?: string;
+  email: string;
 }
 
 export interface LoginResponse {
@@ -26,7 +26,28 @@ export interface LoginResponse {
   email: string;
   token: string;
   tokenType: string;
+  rememberToken?: string;
 }
+
+export interface CredentialsResponse {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface ForgotPasswordRequest {
+  username: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -75,26 +96,6 @@ export class AuthService {
     localStorage.setItem(this.tokenKey, token);
   }
 
-  forgotPassword(username: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/forgot-password`, { name: username });
-  }
-
-  loginWithToken(token: string): Observable<AuthResponse> {
-    return this.http
-      .get<AuthResponse>(`${this.baseUrl}/verify-token?token=${token}`)
-      .pipe(tap(response => this.saveSession(response)));
-  }
-
-  resetPassword(payload: { token: string; newPassword: String }): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.baseUrl}/reset-password`, payload)
-      .pipe(tap(response => this.saveSession(response)));
-  }
-
-  getCredentialsByToken(token: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/remember-me?token=${token}`);
-  }
-
   clearSession(): void {
     if (!this.isBrowser()) {
       return;
@@ -134,6 +135,35 @@ export class AuthService {
         email: session.email, 
         loggedInAt: new Date().toISOString() 
       })
+    );
+  }
+
+  loginWithToken(token: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${this.baseUrl}/login-with-token`, { token })
+      .pipe(tap(response => {
+        this.saveToken(response.token);
+        this.saveSession(response);
+      }));
+  }
+
+  getCredentialsByToken(token: string): Observable<CredentialsResponse> {
+    return this.http.get<CredentialsResponse>(
+      `${this.baseUrl}/credentials/${token}`
+    );
+  }
+
+  forgotPassword(username: string): Observable<ForgotPasswordResponse> {
+    return this.http.post<ForgotPasswordResponse>(
+      `${this.baseUrl}/forgot-password`,
+      { username }
+    );
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/reset-password`,
+      request
     );
   }
 }

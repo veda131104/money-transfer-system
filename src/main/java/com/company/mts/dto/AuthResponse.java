@@ -5,19 +5,8 @@ public class AuthResponse {
     private String email;
     private String rememberToken;
 
-    public AuthResponse(String name, String email) {
+    public AuthResponse(String name) {
         this.name = name;
-        this.email = email;
-    }
-
-    public AuthResponse(String name, String rememberToken) {
-        this.name = name;
-        this.rememberToken = rememberToken;
-    }
-
-    public AuthResponse(String name, String rememberToken) {
-        this.name = name;
-        this.rememberToken = rememberToken;
     }
 
     public String getName() {

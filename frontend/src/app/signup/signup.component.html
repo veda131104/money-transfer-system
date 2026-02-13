@@ -19,19 +19,22 @@
 
         <form class="form" [formGroup]="form" (ngSubmit)="submit()">
           <mat-form-field appearance="outline" class="field">
-            <mat-label>Full Name</mat-label>
-            <input matInput type="text" placeholder="Enter your full name" autocomplete="name"
-              formControlName="name" />
-            @if (form.get('name')?.hasError('required')) {
-            <mat-error>Name is required</mat-error>
+            <mat-label>Username</mat-label>
+            <input matInput type="text" placeholder="Enter your username" autocomplete="username"
+              formControlName="username" />
+            @if (form.get('username')?.hasError('required')) {
+            <mat-error>Username is required</mat-error>
             }
-            @if (form.get('name')?.hasError('minlength')) {
+            @if (form.get('username')?.hasError('minlength')) {
             <mat-error>Must be at least 3 characters</mat-error>
+            }
+            @if (form.get('username')?.hasError('usernameTaken')) {
+            <mat-error>This username is already taken</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="field">
-            <mat-label>Email Address</mat-label>
+            <mat-label>Email</mat-label>
             <input matInput type="email" placeholder="Enter your email" autocomplete="email"
               formControlName="email" />
             @if (form.get('email')?.hasError('required')) {
@@ -42,17 +45,6 @@
             }
             @if (form.get('email')?.hasError('emailTaken')) {
             <mat-error>This email is already registered</mat-error>
-            }
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="field">
-            <mat-label>Email Address</mat-label>
-            <input matInput type="email" placeholder="you@example.com" autocomplete="email" formControlName="email" />
-            @if (form.get('email')?.hasError('required')) {
-            <mat-error>Email is required</mat-error>
-            }
-            @if (form.get('email')?.hasError('email')) {
-            <mat-error>Invalid email format</mat-error>
             }
           </mat-form-field>
 
@@ -75,7 +67,7 @@
             @if (form.get('confirmPassword')?.hasError('required')) {
             <mat-error>Please confirm your password</mat-error>
             }
-            @if (form.get('confirmPassword')?.hasError('passwordMismatch')) {
+            @if (form.hasError('passwordMismatch')) {
             <mat-error>Passwords do not match</mat-error>
             }
           </mat-form-field>

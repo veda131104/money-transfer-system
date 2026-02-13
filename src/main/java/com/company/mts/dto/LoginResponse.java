@@ -6,6 +6,7 @@ public class LoginResponse {
     private String name;
     private String token;
     private String tokenType = "Bearer";
+    private String rememberToken;
 
     public LoginResponse(Long userId, String email, String name, String token) {
         this.userId = userId;
@@ -52,5 +53,13 @@ public class LoginResponse {
 
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    public String getRememberToken() {
+        return rememberToken;
+    }
+
+    public void setRememberToken(String rememberToken) {
+        this.rememberToken = rememberToken;
     }
 }
