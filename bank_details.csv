@@ -1,0 +1,26 @@
+account_number,bank_name,ifsc_code,branch_name,address,email,contact,user_name,credit_card_number,cvv,expiry_date,upi_id,pin
+100000000001,HDFC Bank,HDFC0001234,Mumbai Main,"Marine Drive, Mumbai",amit.sharma@gmail.com,9876543210,amit_sharma,4111222233334444,123,12/28,amit@fihdfc,1234
+100000000002,ICICI Bank,ICIC0005678,Bangalore Koramangala,"100ft Road, Bangalore",priya.nair@gmail.com,9823456789,priya_nair,4222333344445555,456,06/27,priya@icici,5678
+100000000003,State Bank of India,SBIN0009012,Delhi Connaught Place,"CP, New Delhi",rahul.verma@gmail.com,9811223344,rahul_verma,4333444455556666,789,09/26,rahul@oksbi,9012
+100000000004,Axis Bank,UTIB0003456,Pune Hinjewadi,"IT Park, Pune",sneha.patil@gmail.com,9844556677,sneha_patil,4444555566667777,321,03/29,sneha@axisbank,3456
+100000000005,HDFC Bank,HDFC0001234,Chennai Adyar,"Adyar Road, Chennai",vikram.singh@gmail.com,9855667788,vikram_singh,4555666677778888,654,11/27,vikram@fihdfc,7890
+100000000006,ICICI Bank,ICIC0005678,Hyderabad Gachibowli,"Gachibowli, Hyderabad",ananya.das@gmail.com,9866778899,ananya_das,4666777788889999,987,08/30,ananya@icici,1122
+100000000007,Axis Bank,UTIB0003456,Kolkata Salt Lake,"Sector V, Kolkata",arjun.roy@gmail.com,9877889900,arjun_roy,4777888899990000,213,01/26,arjun@axisbank,3344
+100000000008,State Bank of India,SBIN0009012,Ahmedabad SG Road,"SG Road, Ahmedabad",kavita.mehta@gmail.com,9888990011,kavita_mehta,4888999900001111,543,05/28,kavita@oksbi,5566
+100000000009,HDFC Bank,HDFC0001234,Jaipur C-Scheme,"Civil Lines, Jaipur",rohan.gupta@gmail.com,9899001122,rohan_gupta,4999000011112222,876,10/26,rohan@fihdfc,7788
+100000000010,ICICI Bank,ICIC0005678,Indore Vijay Nagar,"AB Road, Indore",isha.khanna@gmail.com,9800112233,isha_khanna,5000111122223333,102,07/27,isha@icici,9900
+100000000011,Axis Bank,UTIB0003456,Lucknow Gomti Nagar,"Picup Bhawan, Lucknow",rishi.mishra@gmail.com,9812345678,rishi_mishra,5111222233334444,304,04/29,rishi@axisbank,1256
+100000000012,State Bank of India,SBIN0009012,Bhopal MP Nagar,"MP Nagar, Bhopal",tanvi.jain@gmail.com,9823451234,tanvi_jain,5222333344445555,506,12/26,tanvi@oksbi,3478
+100000000013,HDFC Bank,HDFC0001234,Chandigarh Sec-17,"Sector 17, Chandigarh",sahil.taneja@gmail.com,9834567890,sahil_taneja,5333444455556666,708,11/30,sahil@fihdfc,5690
+100000000014,ICICI Bank,ICIC0005678,Nagpur Sitabuldi,"Sitabuldi, Nagpur",riya.deshmukh@gmail.com,9845678901,riya_deshmukh,5444555566667777,910,02/27,riya@icici,7812
+100000000015,Axis Bank,UTIB0003456,Surat Varachha,"Varachha, Surat",manish.patel@gmail.com,9856789012,manish_patel,5555666677778888,121,01/28,manish@axisbank,9034
+100000000016,State Bank of India,SBIN0009012,Patna Gandhi Maidan,"Bank Road, Patna",sonia.sinha@gmail.com,9867890123,sonia_sinha,5666777788889999,323,06/29,sonia@oksbi,1201
+100000000017,HDFC Bank,HDFC0001234,Kochi MG Road,"Thevera, Kochi",karthik.menon@gmail.com,9878901234,karthik_menon,5777888899990000,525,10/26,karthik@fihdfc,3412
+100000000018,ICICI Bank,ICIC0005678,Madurai Simmakkal,"Simmakkal, Madurai",divya.raj@gmail.com,9889012345,divya_raj,5888999900001111,727,03/27,divya@icici,5623
+100000000019,Axis Bank,UTIB0003456,Vishakhapatnam MVP,"MVP Colony, Vizag",pavan.kumar@gmail.com,9890123456,pavan_kumar,5999000011112222,929,09/30,pavan@axisbank,7834
+100000000020,State Bank of India,SBIN0009012,Guwahati GS Road,"GS Road, Guwahati",megha.barua@gmail.com,9801234567,megha_barua,6000111122223333,131,05/27,megha@oksbi,9045
+100000000021,HDFC Bank,HDFC0001234,Guwahati GS Road,"GS Road, Guwahati",megha.barua2@gmail.com,9801234568,megha_barua2,6000111122223334,132,05/28,megha2@fihdfc,9046
+100000000022,ICICI Bank,ICIC0005678,Varanasi Sigra,"Sigra, Varanasi",ankit.rai@gmail.com,9811112222,ankit_rai,6111222233334444,414,08/29,ankit@icici,1278
+100000000023,Axis Bank,UTIB0003456,Amritsar Golden Temple,"Heritage Walk, Amritsar",punit.sandhu@gmail.com,9822223333,punit_sandhu,6222333344445555,616,12/27,punit@axisbank,3489
+100000000024,State Bank of India,SBIN0009012,Thiruvananthapuram MG,"Statue, Trivandrum",anjana.n@gmail.com,9833334444,anjana_n,6333444455556666,818,07/26,anjana@oksbi,5601
+100000000025,HDFC Bank,HDFC0001234,Gurugram Cyber Hub,"Cyber City, Gurgaon",rahul.dua@gmail.com,9844445555,rahul_dua,6444555566667777,111,10/30,rahuldua@fihdfc,7812
